@@ -18,9 +18,10 @@ dependencies = [
 ]
 
 
+[project.urls]
+Repository = "https://github.com/ribqahisabsent/mc-diag-boat.git"
+
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-package-mode = false
