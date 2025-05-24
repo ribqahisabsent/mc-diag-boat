@@ -1,0 +1,26 @@
+[project]
+name = "diagonal-boat-helper"
+version = "0.1.0"
+description = "A set of functions for building diagonal boat roads in Minecraft"
+authors = [
+    {name = "Ribqah"}
+]
+license = {text = "GPL-3.0-or-later"}
+readme = "README.md"
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "matplotlib (>=3.10.1,<4.0.0)",
+    "numpy (>=2.2.4,<3.0.0)",
+    "ipywidgets (>=8.1.5,<9.0.0)",
+    "jupyter (>=1.1.1,<2.0.0)",
+    "litemapy (>=0.10.0b0,<0.11.0)",
+    "scikit-image (>=0.25.2,<0.26.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
