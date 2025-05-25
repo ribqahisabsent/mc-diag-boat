@@ -2,7 +2,6 @@ from math import sin, cos, atan, degrees, radians, dist
 from skimage.draw import line_nd
 import ipywidgets as w
 import numpy as np
-from matplotlib import pyplot as plt
 from os.path import isfile
 from litemapy import Schematic, Region, BlockState
 from . import constants
@@ -16,8 +15,8 @@ from .types import Vec2
 
 
 # Compute the relative position of a point from an origin point
-def get_offset(p0: tuple[int, int], p1: tuple[int, int]) -> tuple[int, int]:
-    return (p1[0]-p0[0], p1[1]-p0[1])
+#def get_offset(p0: tuple[int, int], p1: tuple[int, int]) -> tuple[int, int]:
+#    return (p1[0]-p0[0], p1[1]-p0[1])
 
 
 # Compute the angle from an origin point to another point, given the offset
@@ -52,14 +51,14 @@ def get_block_error(angle_error: float) -> float:
     return abs(2 * sin(radians(angle_error/2)))
 
 
-def max_manual_angle_error(optimal_angle: float) -> float:
-    apparent_angle = round(optimal_angle, 1)
+def max_manual_angle_error(target_angle: float) -> float:
+    apparent_angle = round(target_angle, 1)
     min_angle = apparent_angle - 0.05
     max_angle = apparent_angle + 0.05
-    if abs(optimal_angle - min_angle) > abs(optimal_angle - max_angle):
-        angle_error = optimal_angle - min_angle
+    if abs(target_angle - min_angle) > abs(target_angle - max_angle):
+        angle_error = target_angle - min_angle
     else:
-        angle_error = optimal_angle - max_angle
+        angle_error = target_angle - max_angle
     return angle_error
 
 # Compute information about manual player alignment
@@ -88,60 +87,12 @@ def closest_boat_angle_index(optimal_angle: float) -> int:
 
 
 # Compute information about boat player alignment
-def boat_metrics(optimal_angle: float, boat_angle_adjust: int = 0) -> tuple[float, float, float]:
+def boat_metrics(optimal_angle: float, boat_angle_adjust: int = 0) -> tuple[int, float, float]:
     boat_angle_index = (closest_boat_angle_index(optimal_angle) + boat_angle_adjust) % len(constants.BOAT_ANGLES)
     boat_angle = constants.BOAT_ANGLES[boat_angle_index]
     angle_error = optimal_angle - boat_angle
     block_error = get_block_error(angle_error)
     return boat_angle_index, angle_error, block_error
-
-
-# Convert from polar coordinates to cartesion coordinates, factoring in a given origin point
-def polar_to_cartesian(distance: float, angle: float, round_d: bool = False) -> Vec2:
-    angle_r = radians(angle)
-    destination = Vec2((-1 * distance * sin(angle_r)) + origin[0], (distance * cos(angle_r)) + origin[1])
-    if round_d:
-        return destination.rounded()
-    return destination
-
-
-# Compute the raster of a line segment, given its length and angle
-def rasterize(distance: float, angle: float) -> list[list[int]]:
-    offset = polar_to_cartesian(distance, angle)
-    #integer_offset = (int(round(100 * offset[0], 0)), int(round(100 * offset[1], 0)))
-    raster = np.transpose(line_nd((0.0, 0.0), offset, endpoint=True)).tolist()
-    return raster
-
-
-# Add gaps to a raster and segment it into small sections for inclusion in a schematic
-def cut_sxns(raster: list[list[int]], gap_size: int) -> list[list[list[int]]]:
-    uncut_path = [coord for index, coord in enumerate(raster) if index % (gap_size + 1) == 0]
-    sxn_size = max(int(constants.BASE_SXN_SIZE / (gap_size + 1)), 1)
-    return [
-        [
-            uncut_path[index]
-            for index in range(sxn_start, min(sxn_start + sxn_size, len(uncut_path)))
-        ]
-        for sxn_start in range(0, len(uncut_path), sxn_size)
-    ]
-
-
-# Format a name for a schematic, including the given origin and destination coordinates
-def name_schematic(origin_x: int, origin_z: int, destination_x: int, destination_z: int) -> str:
-    origin, destination = format_coords(origin_x, origin_z, destination_x, destination_z)
-    return "path_" + str(origin) + "_" + str(destination)
-
-
-# Create a Region object for a schematic, given a path (list of coordinates)
-def make_region(path: list[list[int]], blocks: list[BlockState]) -> Region:
-    if len(blocks) == 0:
-        raise ValueError("Must be at least one BlockState provided.")
-    path_span = (path[-1][0] - path[0][0] + (1 if path[-1][0] >= 0 else -1), path[-1][1] - path[0][1] + (1 if path[-1][1] >= 0 else -1))
-    region = Region(path[0][0], 0, path[0][1], path_span[0], len(blocks), path_span[1])
-    for coords in path:
-        for block_index, block_state in enumerate(blocks):
-            region[coords[0] - path[0][0], block_index, coords[1] - path[0][1]] = block_state
-    return region
 
 
 # Create a unique filename if using the current filename would overwrite a file
@@ -199,23 +150,6 @@ def evaluate_angles(origin: Vec2, destination: Vec2) -> None:
 
     # Take start and destination points
     # Determine the optimal angle, distance, closest boat angle, error values
-
-
-# Create and save a Litematica schematic file (.litematic); name uses the current BOAT destination
-schem_gen_output = w.Output(layout={'border': '2px solid black', 'margin': '8px', 'padding': '4px', 'width': '1000px'})
-@schem_gen_output.capture()
-def generate_schematic(b) -> None:
-    offset, distance, optimal_angle = basics_metrics(origin_x.value, origin_z.value, destination_x.value, destination_z.value)
-    boat_angle_index = boat_metrics(optimal_angle)[0]
-    raster = rasterize(distance, BOAT_ANGLES[boat_angle_index])
-    sxned_path = cut_sxns(raster, gap_size.value)
-    schem_name = name_schematic(origin_x.value, origin_z.value, boat_destination_g[0], boat_destination_g[1])
-    schem = Schematic(name=schem_name)
-    for sxn in sxned_path:
-        schem.regions[f'{sxn}'] = make_region(sxn, blocks_g)
-    filename = smart_filename(schem_name + ".litematic")
-    schem.save(filename)
-    print("Saved schematic", filename)
 
 
 # Display a repeating block coordinate pattern which approximates the path of a boat angle
