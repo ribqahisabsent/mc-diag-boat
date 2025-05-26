@@ -1,3 +1,4 @@
+from typing import Sequence
 import litemapy as lm
 from .types import Vec2
 
@@ -6,7 +7,7 @@ SXN_SIZE = 16
 
 
 # Add gaps to a raster and segment it into small sections for inclusion in a schematic
-def add_gaps(raster: list[Vec2], gap_size: int) -> list[Vec2]:
+def add_gaps(raster: Sequence[Vec2[int]], gap_size: int) -> list[Vec2[int]]:
     return [
         coord
         for index, coord in enumerate(raster)
@@ -14,42 +15,64 @@ def add_gaps(raster: list[Vec2], gap_size: int) -> list[Vec2]:
     ]
 
 
-def cut_sxns(points: list[Vec2], gap_size: int) -> list[list[Vec2]]:
-    sxn_size = max(int(SXN_SIZE / (gap_size + 1)), 1)
-    sxned = []
-    return [
-        uncut_path[sxn_start:min(sxn_start + sxn_size, len(uncut_path))]
-        for sxn_start in range(0, len(uncut_path), sxn_size)
-    ]
+def cut_regions(points: Sequence[Vec2[int]]) -> list[Sequence[Vec2[int]]]:
+    regioned: list[Sequence[Vec2]] = []
+    region_start_index = 0
+    for index in range(len(points)):
+        diff = (points[index] - points[region_start_index])
+        if abs(diff.x) >= SXN_SIZE or abs(diff.z) >= SXN_SIZE:
+            regioned.append(points[region_start_index:index])
+            region_start_index = index
+    if region_start_index < len(points) - 1:
+        regioned.append(points[region_start_index:len(points) - 1])
+    return regioned
 
 
 # Format a name for a schematic, including the given origin and destination coordinates
-def name_schematic(origin: Vec2, destination: Vec2) -> str:
+def name_schematic(origin: Vec2[int], destination: Vec2[int]) -> str:
     return "path_" + str(origin) + "_" + str(destination)
 
 
 # Create a Region object for a schematic, given a path (list of coordinates)
-def make_region(path: list[list[int]], blocks: list[lm.BlockState]) -> lm.Region:
+def make_region(path: Sequence[Vec2[int]], blocks: Sequence[lm.BlockState]) -> lm.Region:
     if len(blocks) == 0:
         raise ValueError("Must be at least one BlockState provided.")
-    path_span = (path[-1][0] - path[0][0] + (1 if path[-1][0] >= 0 else -1), path[-1][1] - path[0][1] + (1 if path[-1][1] >= 0 else -1))
-    region = lm.Region(path[0][0], 0, path[0][1], path_span[0], len(blocks), path_span[1])
+    path_span = Vec2(
+        path[-1].x - path[0].x + (1 if path[-1].x >= 0 else -1),
+        path[-1].z - path[0].z + (1 if path[-1].z >= 0 else -1)
+    )
+    region = lm.Region(
+        x=path[0].x,
+        y=0,
+        z=path[0].z,
+        width=int(path_span.x),
+        height=len(blocks),
+        length=int(path_span.z),
+    )
     for coords in path:
         for block_index, block_state in enumerate(blocks):
-            region[coords[0] - path[0][0], block_index, coords[1] - path[0][1]] = block_state
+            region[coords.x - path[0].x, block_index, coords.z - path[0].z] = block_state
     return region
 
 
+# TODO make logic for naming part  of another function, accept a name here
 # Create and save a Litematica schematic file (.litematic); name uses the current BOAT destination
-def generate_schematic(offset: Vec2, gap_size: int = 0) -> lm.Schematic:
-    #raster = rasterize(distance, BOAT_ANGLES[boat_angle_index])
+def generate_schematic(
+    offset: Vec2,
+    gap_size: int = 0,
+    blocks: lm.BlockState | Sequence[lm.BlockState] = lm.BlockState("minecraft:blue_ice"),
+    name: str | None = None
+) -> lm.Schematic:
     raster = offset.raster()
-    gapped_path = add_gaps(raster, gap_size)
-    sxned_path = cut_sxns(gapped_path)
-    schem_name = name_schematic(origin_x.value, origin_z.value, boat_destination_g[0], boat_destination_g[1])
-    schem = lm.Schematic(name=schem_name, author="mc_diag_boat")
-    for sxn in sxned_path:
-        schem.regions[f'{sxn}'] = make_region(sxn, blocks_g)
+    gapped_raster = add_gaps(raster, gap_size)
+    regioned_raster = cut_regions(gapped_raster)
+    if name is None:
+        name = lm.info.DEFAULT_NAME
+    schem = lm.Schematic(name=name, author="mc_diag_boat")
+    if isinstance(blocks, lm.BlockState):
+        blocks = [blocks]
+    for index, region in enumerate(regioned_raster):
+        schem.regions[str(index)] = make_region(region, blocks)
     return schem
     #filename = smart_filename(schem_name + ".litematic")
     #schem.save(filename)
