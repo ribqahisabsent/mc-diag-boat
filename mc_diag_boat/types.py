@@ -1,59 +1,86 @@
-from typing import Self
+from typing import Generic, Self, SupportsIndex, TypeVar, overload
 from math import sin, cos, radians
 import skimage.draw
 from .reporting import SIG_FIGS
 
 
-class Vec2:
-    def __init__(self, x: float | int, z: float | int) -> None:
+T = TypeVar("T", int, float)
+
+
+class Vec2(Generic[T]):
+    def __init__(self, x: T, z: T) -> None:
         self.x = x
         self.z = z
 
     def __add__(self, other: Self) -> Self:
-        if not isinstance(other, self.__class__):
+        if not isinstance(other, type(self)):
             raise TypeError(f"Unsupported type(s) for +: '{type(self)}' and '{type(other)}'")
-        return self.__class__(self.x + other.x, self.z + other.z)
+        return type(self)(self.x + other.x, self.z + other.z)
 
     def __sub__(self, other: Self) -> Self:
-        if not isinstance(other, self.__class__):
+        if not isinstance(other, type(self)):
             raise TypeError(f"Unsupported type(s) for -: '{type(self)}' and '{type(other)}'")
-        return self.__class__(self.x - other.x, self.z - other.z)
+        return type(self)(self.x - other.x, self.z - other.z)
 
-    def __mul__(self, other: int | float) -> Self:
-        if not isinstance(other, (int, float)):
-            raise TypeError(f"Unsupported type(s) for *: '{type(self)}' and '{type(other)}'")
-        return self.__class__(self.x * other, self.z * other)
+    @overload
+    def __mul__(self, scalar: SupportsIndex) -> Self: ...
+    @overload
+    def __mul__(self, scalar: float) -> "Vec2[float]": ...
+    def __mul__(self, scalar: SupportsIndex | float) -> Self | "Vec2[float]":
+        if isinstance(scalar, SupportsIndex):
+            scalar = int(scalar)
+            return type(self)(self.x * scalar, self.z * scalar)
+        elif isinstance(scalar, float):
+            return Vec2(self.x * scalar, self.z * scalar)
+        raise TypeError(f"Unsupported type(s) for *: '{type(self)}' and '{type(scalar)}'")
 
-    def __rmul__(self, other: int | float) -> Self:
-        return self.__mul__(other)
+    __rmul__ = __mul__
+
+    def __truediv__(self, scalar: float) -> "Vec2[float]":
+        return Vec2(self.x / scalar, self.z / scalar)
+
+    @overload
+    def __floordiv__(self, scalar: SupportsIndex) -> Self: ...
+    @overload
+    def __floordiv__(self, scalar: float) -> "Vec2[float]": ...
+    def __floordiv__(self, scalar: SupportsIndex | float) -> Self | "Vec2[float]":
+        if isinstance(scalar, SupportsIndex):
+            scalar = int(scalar)
+            return type(self)(self.x // scalar, self.z // scalar)
+        elif isinstance(scalar, float):
+            return Vec2(self.x // scalar, self.z // scalar)
 
     def __repr__(self) -> str:
         return f"({self.x}, {self.z})"
 
-    @classmethod
-    def from_polar(cls, rho: float, phi: float) -> Self:
+    @staticmethod
+    def from_polar(rho: float, phi: float) -> "Vec2[float]":
         radian_phi = radians(phi)
-        return cls((-1 * rho * sin(radian_phi)), (rho * cos(radian_phi)))
+        return Vec2((-1 * rho * sin(radian_phi)), (rho * cos(radian_phi)))
 
     def length(self) -> float:
         return (self.x**2 + self.z**2)**0.5
 
-    def rounded(self, ndigits: int = 0) -> Self:
-        if ndigits == 0:
-            return self.__class__(round(self.x), round(self.z))
-        return self.__class__(round(self.x, ndigits), round(self.z, ndigits))
+    @overload
+    def rounded(self) -> "Vec2[int]": ...
+    @overload
+    def rounded(self, ndigits: SupportsIndex) -> "Vec2[float]": ...
+    def rounded(self, ndigits: SupportsIndex | None = None) -> "Vec2[float] | Vec2[int]":
+        if ndigits is None:
+            return Vec2(round(self.x), round(self.z))
+        return Vec2(round(self.x, ndigits), round(self.z, ndigits))
 
-    def as_tuple(self) -> tuple[float, float]:
+    def as_tuple(self) -> tuple[T, T]:
         return self.x, self.z
 
-    def raster(self, origin: Self | None = None) -> list[Self]:
+    def raster(self, origin: "Vec2 | None" = None) -> list["Vec2[int]"]:
         """Get the raster of the vector.
         """
         if origin is None:
-            origin = self.__class__(0.0, 0.0)
+            origin = Vec2(0, 0)
         return [
-            self.__class__(x, z)
-            for x, z in zip(*skimage.draw.line_nd(origin, self.as_tuple(), endpoint=True))
+            Vec2(int(x), int(z))
+            for x, z in zip(*skimage.draw.line_nd(origin.as_tuple(), self.as_tuple(), endpoint=True))
         ]
 
 

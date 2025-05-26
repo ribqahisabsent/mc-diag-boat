@@ -36,7 +36,7 @@ def get_angle(offset: Vec2) -> float:
 
 
 # Compute basic information about origin and destination
-#def basics_metrics(origin: Vec2, destination: Vec2) -> tuple[Vec2, float, float]:
+#def basics_metrics(origin: Vec2[int], destination: Vec2[int]) -> tuple[Vec2[int], float, float]:
 #    #origin, destination = format_coords(origin_x, origin_z, destination_x, destination_z)
 #    #offset = get_offset(origin, destination)
 #    offset = destination - origin
@@ -135,7 +135,7 @@ def find_pattern(distance: float, target_angle: float, raster: list[list[int]], 
 ################################################
 
 # Display relevant metrics related to the origin and destination
-def evaluate_angles(origin: Vec2, destination: Vec2) -> None:
+def evaluate_angles(origin: Vec2[int], destination: Vec2[int]) -> None:
     global boat_destination_g
     #offset, distance, optimal_angle = basics_metrics(origin_x, origin_z, destination_x, destination_z)
     offset = destination - origin
