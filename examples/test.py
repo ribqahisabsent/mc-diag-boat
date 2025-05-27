@@ -12,7 +12,6 @@ if False:
     a = y // z
     print(type(a), a)
 
-#offset = Vec2.from_polar(60.0, 67.5)
 offset = Vec2(-40.0, 50.2)
 
 if False:
@@ -43,11 +42,38 @@ if False:
     print(type(fv.x), type(fv.z))
     fv = 2.1 * Vec2(1, 5)
     print(type(fv), fv)
-    fv = Vec2.from_polar(23, 3)
 
-if True:
+if False:
     v = Vec2(2.4, 2.7)
     iv = v.rounded()
     fv = v.rounded(0)
     print(iv, fv)
+    v2 = iv - fv
+    print(v2)
+    v2 = iv - iv
+    print(v2)
+
+if False:
+    v = Vec2.NORTH
+    print(v, v.angle())
+    print(v.rotated(-5).angle())
+    v = Vec2.NORTH.rotated(-0.00000001)
+    print(v, v.angle())
+    print(v.rotated(-5).angle())
+    v = Vec2.SOUTH.rotated(-1)
+    print(v, v.angle())
+    print(v.rotated(-5).angle())
+    v = Vec2.SOUTH.rotated(-91)
+    print(v, v.angle())
+    print(v.rotated(-5).angle())
+
+if True:
+    v = Vec2.NORTH
+    print(v, v.angle())
+    v = v * 10
+    print(v, v.angle())
+    v = v.rotated(39)
+    print(v, v.angle())
+    v = 10 * Vec2.NORTH.rotated(39)
+    print(v, v.angle())
 
