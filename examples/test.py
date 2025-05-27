@@ -54,16 +54,16 @@ if False:
     print(v2)
 
 if False:
-    v = Vec2.NORTH
+    v = Vec2.ZERODEG.rotated(180)
     print(v, v.angle())
     print(v.rotated(-5).angle())
-    v = Vec2.NORTH.rotated(-0.00000001)
+    v = Vec2.ZERODEG.rotated(-180)
     print(v, v.angle())
     print(v.rotated(-5).angle())
-    v = Vec2.SOUTH.rotated(-1)
+    v = Vec2.ZERODEG.rotated(-1)
     print(v, v.angle())
     print(v.rotated(-5).angle())
-    v = Vec2.SOUTH.rotated(-91)
+    v = Vec2.ZERODEG.rotated(-91)
     print(v, v.angle())
     print(v.rotated(-5).angle())
 
