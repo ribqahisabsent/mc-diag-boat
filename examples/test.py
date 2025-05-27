@@ -35,7 +35,7 @@ if False:
     schem = generate_schematic(offset)
     print(type(schem))
     #print({key: region.__dict__ for key, region in schem.regions.items()})
-    schem.save("test_schem.litematica")
+    schem.save("schem_test.litematica")
 
 if False:
     fv = Vec2(1.0, 5) // 2
