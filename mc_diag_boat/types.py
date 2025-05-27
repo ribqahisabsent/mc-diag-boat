@@ -69,13 +69,20 @@ class Vec2(Generic[_T]):
     def __repr__(self) -> str:
         return f"({self.x}, {self.z})"
 
-    @staticmethod
-    def from_polar(rho: float, phi: float) -> "Vec2[float]":
-        radian_phi = radians(phi)
-        return Vec2((-1 * rho * sin(radian_phi)), (rho * cos(radian_phi)))
-
     def length(self) -> float:
         return (self.x**2 + self.z**2)**0.5
+
+    def angle(self) -> float:
+        return -1 * degrees(atan2(self.x, self.z))
+
+    def rotated(self, angle: float) -> "Vec2[float]":
+        radian_angle = radians(angle)
+        angle_cos = cos(radian_angle)
+        angle_sin = sin(radian_angle)
+        return Vec2(
+            self.x * angle_cos - self.z * angle_sin,
+            self.x * angle_sin + self.z * angle_cos,
+        )
 
     @overload
     def rounded(self) -> "Vec2[int]": ...
