@@ -1,14 +1,22 @@
-from typing import Generic, Self, SupportsIndex, TypeVar, overload
-from math import sin, cos, radians
+from typing import ClassVar, Generic, Self, SupportsIndex, TypeVar, overload
+from math import radians, degrees, sin, cos, atan2
 import skimage.draw
 from .reporting import SIG_FIGS
 
 
-T = TypeVar("T", int, float)
+_T = TypeVar("_T", int, float)
 
 
-class Vec2(Generic[T]):
-    def __init__(self, x: T, z: T) -> None:
+class Vec2(Generic[_T]):
+    x: _T
+    z: _T
+
+    NORTH: ClassVar["Vec2[int]"]
+    WEST: ClassVar["Vec2[int]"]
+    SOUTH: ClassVar["Vec2[int]"]
+    EAST: ClassVar["Vec2[int]"]
+
+    def __init__(self, x: _T, z: _T) -> None:
         self.x = x
         self.z = z
 
@@ -78,7 +86,7 @@ class Vec2(Generic[T]):
             return Vec2(round(self.x), round(self.z))
         return Vec2(round(self.x, ndigits), round(self.z, ndigits))
 
-    def as_tuple(self) -> tuple[T, T]:
+    def as_tuple(self) -> tuple[_T, _T]:
         return self.x, self.z
 
     def raster(self, origin: "Vec2 | None" = None) -> list["Vec2[int]"]:
@@ -90,6 +98,12 @@ class Vec2(Generic[T]):
             Vec2(int(x), int(z))
             for x, z in zip(*skimage.draw.line_nd(origin.as_tuple(), self.as_tuple(), endpoint=True))
         ]
+
+
+Vec2.NORTH = Vec2(0, -1)
+Vec2.WEST = Vec2(-1, 0)
+Vec2.SOUTH = Vec2(0, 1)
+Vec2.EAST = Vec2(1, 0)
 
 
 class TravelError:
