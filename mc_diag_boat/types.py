@@ -12,15 +12,23 @@ class Vec2(Generic[T]):
         self.x = x
         self.z = z
 
-    def __add__(self, other: Self) -> Self:
-        if not isinstance(other, type(self)):
+    @overload
+    def __add__(self, other: "Vec2[int]") -> Self: ...
+    @overload
+    def __add__(self, other: "Vec2[float]") -> "Vec2[float]": ...
+    def __add__(self, other: "Vec2[int] | Vec2[float]") -> Self | "Vec2[float]":
+        if not isinstance(other, Vec2):
             raise TypeError(f"Unsupported type(s) for +: '{type(self)}' and '{type(other)}'")
-        return type(self)(self.x + other.x, self.z + other.z)
+        return Vec2(self.x + other.x, self.z + other.z)
 
-    def __sub__(self, other: Self) -> Self:
-        if not isinstance(other, type(self)):
+    @overload
+    def __sub__(self, other: "Vec2[int]") -> Self: ...
+    @overload
+    def __sub__(self, other: "Vec2[float]") -> "Vec2[float]": ...
+    def __sub__(self, other: "Vec2[int] | Vec2[float]") -> Self | "Vec2[float]":
+        if not isinstance(other, Vec2):
             raise TypeError(f"Unsupported type(s) for -: '{type(self)}' and '{type(other)}'")
-        return type(self)(self.x - other.x, self.z - other.z)
+        return Vec2(self.x - other.x, self.z - other.z)
 
     @overload
     def __mul__(self, scalar: SupportsIndex) -> Self: ...
