@@ -72,12 +72,39 @@ class Vec2(Generic[_T]):
         return f"({self.x}, {self.z})"
 
     def length(self) -> float:
+        """Get the length of this vector
+
+        Returns
+        -------
+        `length` : `float`
+            The Euclidean length of this vector.
+        """
         return (self.x**2 + self.z**2)**0.5
 
     def angle(self) -> float:
+        """Get the angle of this vector.
+
+        Returns
+        -------
+        `angle` : `float`
+            The angle, in degrees, of this vector in terms of
+            Minecraft horizontal facing direction (0.0 == South).
+        """
         return -1 * degrees(atan2(self.x, self.z))
 
     def rotated(self, angle: float) -> "Vec2[float]":
+        """Return a rotated version of this vector.
+
+        Parameters
+        ----------
+        `angle` : `float`
+            The angle, in degrees, by which this vector will be rotated.
+
+        Returns
+        -------
+        `rotated` : `Vec2[float]`
+            A rotated version of the original vector.
+        """
         radian_angle = radians(angle)
         angle_cos = cos(radian_angle)
         angle_sin = sin(radian_angle)
@@ -86,11 +113,36 @@ class Vec2(Generic[_T]):
             self.x * angle_sin + self.z * angle_cos,
         )
 
+    def normalized(self) -> "Vec2[float]":
+        """Get this vector's normal vector.
+
+        Returns
+        -------
+        `normal` : `Vec2[float]`
+            The normal vector (length = 1.0) along
+            the same angle as this vector.
+        """
+        return self / self.length()
+
     @overload
     def rounded(self) -> "Vec2[int]": ...
     @overload
     def rounded(self, ndigits: SupportsIndex) -> "Vec2[float]": ...
     def rounded(self, ndigits: SupportsIndex | None = None) -> "Vec2[float] | Vec2[int]":
+        """Return a rounded version of this vector.
+
+        Parameters
+        ----------
+        `ndigits` : `int`, optional
+            The number of digits to include after the decimal.
+            If no value is given, a `Vec2[int]` is returned.
+            If any value is given, even 0, a `Vec2[float]` is returned.
+
+        Returns
+        -------
+        `rounded` : `Vec2[int]` or `Vec2[float]`
+            A rounded version of the original vector.
+        """
         if ndigits is None:
             return Vec2(round(self.x), round(self.z))
         return Vec2(round(self.x, ndigits), round(self.z, ndigits))
@@ -98,14 +150,39 @@ class Vec2(Generic[_T]):
     def as_tuple(self) -> tuple[_T, _T]:
         return self.x, self.z
 
-    def raster(self, origin: "Vec2 | None" = None) -> list["Vec2[int]"]:
+    def raster(self, origin: "Vec2 | None" = None, block_coords: bool = True) -> list["Vec2[int]"]:
         """Get the raster of the vector.
+
+        The raster is a continuous, direct path of block locations
+        from the origin (default (0, 0)) to the vector tail.
+
+        Parameters
+        ----------
+        `origin` : `Vec2` or `None`, optional
+            The start coordinate of the raster.
+            If `None` (default), `Vec2(0, 0)` is used.
+        `block_coords` : `bool`, optional
+            Whether the origin and end coordinate parameters represent
+            block locations or continuous coordinate values.
+
+        Returns
+        -------
+        `raster` : `list` of `Vec2[int]`
+            The list of block locations in the continuous, direct path.
         """
         if origin is None:
             origin = Vec2(0, 0)
+        if block_coords:
+            coord_adjustment = Vec2.ZERO
+        else:
+            coord_adjustment = Vec2(-0.5, -0.5)
         return [
             Vec2(int(x), int(z))
-            for x, z in zip(*skimage.draw.line_nd(origin.as_tuple(), self.as_tuple(), endpoint=True))
+            for x, z in zip(*skimage.draw.line_nd(
+                (origin + coord_adjustment).as_tuple(),
+                (self + coord_adjustment).as_tuple(),
+                endpoint=True,
+            ))
         ]
 
 
