@@ -20,19 +20,19 @@ from .types import Vec2
 
 
 # Compute the angle from an origin point to another point, given the offset
-def get_angle(offset: Vec2) -> float:
-    if offset.x == 0:
-        if offset.z > 0:
-            return 0.0
-        if offset.z < 0:
-            return 180.0
-        else:
-            raise ValueError("No offset of destination from origin")
-    direction = degrees(atan(offset.z/offset.x))
-    if offset.x > 0:
-        return direction - 90.0
-    else:
-        return direction + 90.0
+#def get_angle(offset: Vec2) -> float:
+#    if offset.x == 0:
+#        if offset.z > 0:
+#            return 0.0
+#        if offset.z < 0:
+#            return 180.0
+#        else:
+#            raise ValueError("No offset of destination from origin")
+#    direction = degrees(atan(offset.z/offset.x))
+#    if offset.x > 0:
+#        return direction - 90.0
+#    else:
+#        return direction + 90.0
 
 
 # Compute basic information about origin and destination
@@ -115,10 +115,13 @@ def find_pattern(distance: float, target_angle: float, raster: list[list[int]], 
     block_error = 0.0
     for pattern_length in range(1, constants.MAX_PATTERN_SIZE + 1):
         pattern.append(raster[pattern_length])
-        pattern_offset = get_offset(pattern[0], pattern[-1])
-        angle_error = get_angle(pattern_offset) - target_angle
+        #pattern_offset = get_offset(pattern[0], pattern[-1])
+        pattern_offset = Vec2(pattern[-1][0] - pattern[0][0], pattern[-1][1] - pattern[0][1])
+        #angle_error = get_angle(pattern_offset) - target_angle
+        angle_error = pattern_offset.angle() - target_angle
         block_error = get_block_error(angle_error)
-        if dist((0,0), pattern_offset) >= distance:
+        #if dist((0,0), pattern_offset) >= distance:
+        if pattern_offset.length() >= distance:
             break
         if block_error <= block_error_thr:
             break
@@ -140,7 +143,8 @@ def evaluate_angles(origin: Vec2[int], destination: Vec2[int]) -> None:
     #offset, distance, optimal_angle = basics_metrics(origin_x, origin_z, destination_x, destination_z)
     offset = destination - origin
     distance = offset.length()
-    optimal_angle = get_angle(offset)
+    #optimal_angle = get_angle(offset)
+    optimal_angle = offset.angle()
     print_basics(offset, distance, optimal_angle)
     apparent_angle, apparent_angle_error, apparent_block_error = manual_metrics(optimal_angle)
     print_manual(distance, apparent_angle, apparent_angle_error, apparent_block_error)
