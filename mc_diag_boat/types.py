@@ -125,5 +125,5 @@ class TravelError:
 
     def __repr__(self) -> str:
         attrs = ", ".join(f"{key}={value:.{SIG_FIGS}}" for key, value in vars(self).items())
-        return f"{self.__class__.__name__}({attrs})"
+        return f"{type(self).__name__}({attrs})"
 
