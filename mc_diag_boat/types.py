@@ -15,6 +15,7 @@ class Vec2(Generic[_T]):
     WEST: ClassVar["Vec2[int]"]
     SOUTH: ClassVar["Vec2[int]"]
     EAST: ClassVar["Vec2[int]"]
+    ZERO: ClassVar["Vec2[int]"]
     ZERODEG: ClassVar["Vec2[int]"]
 
     def __init__(self, x: _T, z: _T) -> None:
@@ -112,6 +113,7 @@ Vec2.NORTH = Vec2(0, -1)
 Vec2.WEST = Vec2(-1, 0)
 Vec2.SOUTH = Vec2(0, 1)
 Vec2.EAST = Vec2(1, 0)
+Vec2.ZERO = Vec2(0, 0)
 Vec2.ZERODEG = Vec2.SOUTH
 
 

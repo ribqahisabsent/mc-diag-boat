@@ -76,4 +76,8 @@ if True:
     print(v, v.angle())
     v = 10 * Vec2.NORTH.rotated(39)
     print(v, v.angle())
+    v = Vec2.EAST
+    print(v, v.angle())
+    v = Vec2.ZERO
+    print(v, v.angle())
 
