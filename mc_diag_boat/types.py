@@ -139,6 +139,13 @@ class Vec2(Generic[_T]):
         return Vec2(round(self.x, ndigits), round(self.z, ndigits))
 
     def as_tuple(self) -> tuple[_T, _T]:
+        """Get a tuple of the `x` and `z` values of this vector.
+
+        Returns
+        -------
+        `xz_tuple` : `tuple[_T, _T]`
+            A tuple containing the `x` and `z` values of the vector.
+        """
         return self.x, self.z
 
     def raster(self, origin: "Vec2 | None" = None, block_coords: bool = True) -> list["Vec2[int]"]:
