@@ -83,7 +83,7 @@ class Vec2(Generic[_T]):
         """
         return -1 * degrees(atan2(self.x, self.z))
 
-    def rotated(self, angle: float) -> "Vec2[float]":
+    def rotate(self, angle: float) -> "Vec2[float]":
         """Return a rotated version of this vector.
 
         Parameters
@@ -104,7 +104,7 @@ class Vec2(Generic[_T]):
             self.x * angle_sin + self.z * angle_cos,
         )
 
-    def normalized(self) -> "Vec2[float]":
+    def normalize(self) -> "Vec2[float]":
         """Get this vector's normal vector.
 
         Returns
@@ -116,10 +116,10 @@ class Vec2(Generic[_T]):
         return self / self.length()
 
     @overload
-    def rounded(self) -> "Vec2[int]": ...
+    def round(self) -> "Vec2[int]": ...
     @overload
-    def rounded(self, ndigits: SupportsIndex) -> "Vec2[float]": ...
-    def rounded(self, ndigits: SupportsIndex | None = None) -> "Vec2[float] | Vec2[int]":
+    def round(self, ndigits: SupportsIndex) -> "Vec2[float]": ...
+    def round(self, ndigits: SupportsIndex | None = None) -> "Vec2[float] | Vec2[int]":
         """Return a rounded version of this vector.
 
         Parameters
