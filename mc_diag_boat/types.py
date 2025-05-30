@@ -25,8 +25,6 @@ class Vec2(Generic[_T]):
     @overload
     def __add__(self, other: "Vec2[float]") -> "Vec2[float]": ...
     def __add__(self, other: "Vec2[int] | Vec2[float]") -> Self | "Vec2[float]":
-        if not isinstance(other, Vec2):
-            raise TypeError(f"Unsupported type(s) for +: '{type(self)}' and '{type(other)}'")
         return Vec2(self.x + other.x, self.z + other.z)
 
     @overload
@@ -34,8 +32,6 @@ class Vec2(Generic[_T]):
     @overload
     def __sub__(self, other: "Vec2[float]") -> "Vec2[float]": ...
     def __sub__(self, other: "Vec2[int] | Vec2[float]") -> Self | "Vec2[float]":
-        if not isinstance(other, Vec2):
-            raise TypeError(f"Unsupported type(s) for -: '{type(self)}' and '{type(other)}'")
         return Vec2(self.x - other.x, self.z - other.z)
 
     @overload
@@ -46,9 +42,7 @@ class Vec2(Generic[_T]):
         if isinstance(scalar, SupportsIndex):
             scalar = int(scalar)
             return type(self)(self.x * scalar, self.z * scalar)
-        elif isinstance(scalar, float):
-            return Vec2(self.x * scalar, self.z * scalar)
-        raise TypeError(f"Unsupported type(s) for *: '{type(self)}' and '{type(scalar)}'")
+        return Vec2(self.x * scalar, self.z * scalar)
 
     __rmul__ = __mul__
 
@@ -63,8 +57,7 @@ class Vec2(Generic[_T]):
         if isinstance(scalar, SupportsIndex):
             scalar = int(scalar)
             return type(self)(self.x // scalar, self.z // scalar)
-        elif isinstance(scalar, float):
-            return Vec2(self.x // scalar, self.z // scalar)
+        return Vec2(self.x // scalar, self.z // scalar)
 
     def __repr__(self) -> str:
         return f"({self.x}, {self.z})"
