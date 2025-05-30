@@ -6,7 +6,7 @@ from os.path import isfile
 from litemapy import Schematic, Region, BlockState
 from . import constants
 from . import reporting
-from .types import Vec2
+from .vec2 import Vec2
 
 
 # Format origin and destination coordinates as tuple[int, int]

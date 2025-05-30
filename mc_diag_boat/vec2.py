@@ -191,14 +191,3 @@ Vec2.EAST = Vec2(1, 0)
 Vec2.ZERO = Vec2(0, 0)
 Vec2.ZERODEG = Vec2.SOUTH
 
-
-class TravelError:
-    def __init__(self, angle_error: float, distance: float) -> None:
-        self.angle = angle_error
-        self.per_block = abs(2 * sin(radians(angle_error/2)))
-        self.total = self.per_block * distance
-
-    def __repr__(self) -> str:
-        attrs = ", ".join(f"{key}={value:.{SIG_FIGS}}" for key, value in vars(self).items())
-        return f"{type(self).__name__}({attrs})"
-

@@ -1,6 +1,6 @@
 from typing import Sequence
 import litemapy as lm
-from .types import Vec2
+from .vec2 import Vec2
 
 
 SXN_SIZE = 16
