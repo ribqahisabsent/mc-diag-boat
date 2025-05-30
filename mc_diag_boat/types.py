@@ -1,5 +1,6 @@
 from typing import ClassVar, Generic, Self, SupportsIndex, TypeVar, overload
-from math import radians, degrees, sin, cos, atan2
+from dataclasses import dataclass
+from math import radians, degrees, sin, cos, atan2, dist
 import skimage.draw
 from .reporting import SIG_FIGS
 
@@ -7,6 +8,7 @@ from .reporting import SIG_FIGS
 _T = TypeVar("_T", int, float)
 
 
+@dataclass(frozen=True, slots=True)
 class Vec2(Generic[_T]):
     x: _T
     z: _T
@@ -17,10 +19,6 @@ class Vec2(Generic[_T]):
     EAST: ClassVar["Vec2[int]"]
     ZERO: ClassVar["Vec2[int]"]
     ZERODEG: ClassVar["Vec2[int]"]
-
-    def __init__(self, x: _T, z: _T) -> None:
-        self.x = x
-        self.z = z
 
     @overload
     def __add__(self, other: "Vec2[int]") -> Self: ...
@@ -79,7 +77,7 @@ class Vec2(Generic[_T]):
         `length` : `float`
             The Euclidean length of this vector.
         """
-        return (self.x**2 + self.z**2)**0.5
+        return dist((0, 0), (self.x, self.z))
 
     def angle(self) -> float:
         """Get the angle of this vector.
