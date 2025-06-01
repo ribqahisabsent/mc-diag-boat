@@ -1,9 +1,6 @@
 from math import sin, cos, atan, degrees, radians, dist
-from skimage.draw import line_nd
 import ipywidgets as w
-import numpy as np
 from os.path import isfile
-from litemapy import Schematic, Region, BlockState
 from . import constants
 from . import reporting
 from .vec2 import Vec2
