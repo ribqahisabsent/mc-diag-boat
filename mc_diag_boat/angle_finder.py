@@ -4,6 +4,7 @@ from os.path import isfile
 from . import constants
 from . import reporting
 from .vec2 import Vec2
+from .boat_angle import BoatAngle
 
 
 # Format origin and destination coordinates as tuple[int, int]
@@ -72,24 +73,25 @@ def max_manual_angle_error(target_angle: float) -> float:
 
 
 # Find the closest boat angle to a given angle
-def closest_boat_angle_index(optimal_angle: float) -> int:
-    index = 0
-    angle = 0.0
-    for index, angle in enumerate(constants.BOAT_ANGLES):
-        if angle > optimal_angle:
-            break
-    if abs(optimal_angle-angle) > abs(optimal_angle-constants.BOAT_ANGLES[index-1]):
-        index -= 1
-    return index
+#def closest_boat_angle_index(optimal_angle: float) -> int:
+#    index = 0
+#    angle = 0.0
+#    for index, angle in enumerate(constants.BOAT_ANGLES):
+#        if angle > optimal_angle:
+#            break
+#    if abs(optimal_angle-angle) > abs(optimal_angle-constants.BOAT_ANGLES[index-1]):
+#        index -= 1
+#    return index
 
 
 # Compute information about boat player alignment
-def boat_metrics(optimal_angle: float, boat_angle_adjust: int = 0) -> tuple[int, float, float]:
-    boat_angle_index = (closest_boat_angle_index(optimal_angle) + boat_angle_adjust) % len(constants.BOAT_ANGLES)
-    boat_angle = constants.BOAT_ANGLES[boat_angle_index]
+def boat_metrics(optimal_angle: float, boat_angle_adjust: int = 0) -> tuple[float, float, float]:
+    #boat_angle_index = (closest_boat_angle_index(optimal_angle) + boat_angle_adjust) % len(constants.BOAT_ANGLES)
+    #boat_angle = constants.BOAT_ANGLES[boat_angle_index]
+    boat_angle = BoatAngle.from_index(BoatAngle.closest_index(optimal_angle) + boat_angle_adjust)
     angle_error = optimal_angle - boat_angle
     block_error = get_block_error(angle_error)
-    return boat_angle_index, angle_error, block_error
+    return boat_angle, angle_error, block_error
 
 
 # Create a unique filename if using the current filename would overwrite a file
@@ -145,9 +147,9 @@ def evaluate_angles(origin: Vec2[int], destination: Vec2[int]) -> None:
     print_basics(offset, distance, optimal_angle)
     apparent_angle, apparent_angle_error, apparent_block_error = manual_metrics(optimal_angle)
     print_manual(distance, apparent_angle, apparent_angle_error, apparent_block_error)
-    boat_angle_index, boat_angle_error, boat_block_error = boat_metrics(optimal_angle)
-    boat_destination_g = polar_to_cartesian((origin_x, origin_z), distance, BOAT_ANGLES[boat_angle_index], round_d=True)
-    print_boat(distance, boat_angle_index, boat_angle_error, boat_block_error, boat_destination_g)
+    boat_angle, boat_angle_error, boat_block_error = boat_metrics(optimal_angle)
+    boat_destination_g = polar_to_cartesian((origin_x, origin_z), distance, boat_angle, round_d=True)
+    print_boat(distance, boat_angle, boat_angle_error, boat_block_error, boat_destination_g)
 
     # Take start and destination points
     # Determine the optimal angle, distance, closest boat angle, error values
