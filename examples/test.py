@@ -1,6 +1,7 @@
 import numpy as np
 import skimage.draw
-from mc_diag_boat.types import Vec2
+from mc_diag_boat.vec2 import Vec2
+from mc_diag_boat.boat_angle import BoatAngle
 from mc_diag_boat.schematic import add_gaps, cut_regions, generate_schematic
 
 
@@ -67,7 +68,7 @@ if False:
     print(v, v.angle())
     print(v.rotated(-5).angle())
 
-if True:
+if False:
     v = Vec2.NORTH
     print(v, v.angle())
     v = v * 10
@@ -80,4 +81,11 @@ if True:
     print(v, v.angle())
     v = Vec2.ZERO
     print(v, v.angle())
+
+if True:
+    for i in range(0, 360, 16):
+        angle = BoatAngle.from_index(i)
+        print(angle)
+        print(BoatAngle.closest_to(angle, 5))
+    print(BoatAngle.closest_to(180, 5))
 
