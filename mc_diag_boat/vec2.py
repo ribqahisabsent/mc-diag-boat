@@ -23,14 +23,14 @@ class Vec2(Generic[_T]):
     def __add__(self, other: "Vec2[int]") -> Self: ...
     @overload
     def __add__(self, other: "Vec2[float]") -> "Vec2[float]": ...
-    def __add__(self, other: "Vec2[int] | Vec2[float]") -> Self | "Vec2[float]":
+    def __add__(self, other: "Vec2") -> Self | "Vec2[float]":
         return Vec2(self.x + other.x, self.z + other.z)
 
     @overload
     def __sub__(self, other: "Vec2[int]") -> Self: ...
     @overload
     def __sub__(self, other: "Vec2[float]") -> "Vec2[float]": ...
-    def __sub__(self, other: "Vec2[int] | Vec2[float]") -> Self | "Vec2[float]":
+    def __sub__(self, other: "Vec2") -> Self | "Vec2[float]":
         return Vec2(self.x - other.x, self.z - other.z)
 
     @overload
@@ -118,7 +118,7 @@ class Vec2(Generic[_T]):
     def round(self) -> "Vec2[int]": ...
     @overload
     def round(self, ndigits: SupportsIndex) -> "Vec2[float]": ...
-    def round(self, ndigits: SupportsIndex | None = None) -> "Vec2[float] | Vec2[int]":
+    def round(self, ndigits: SupportsIndex | None = None) -> "Vec2":
         """Return a rounded version of this vector.
 
         Parameters
