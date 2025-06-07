@@ -134,6 +134,23 @@ class Vec2(Generic[_T]):
         return self / self.length()
 
     @overload
+    def dot(self, other: "Vec2[int]") -> _T: ...
+    @overload
+    def dot(self, other: "Vec2[float]") -> float: ...
+    def dot(self, other: "Vec2") -> _T | float:
+        return self.x * other.x + self.z * other.z
+
+    @overload
+    def cross(self, other: "Vec2[int]") -> _T: ...
+    @overload
+    def cross(self, other: "Vec2[float]") -> float: ...
+    def cross(self, other: "Vec2") -> _T | float:
+        return self.x * other.z - self.z * other.x
+
+    def project(self, other: "Vec2") -> "Vec2[float]":
+        return self.dot(other) / other.dot(other) * other
+
+    @overload
     def round(self) -> "Vec2[int]": ...
     @overload
     def round(self, ndigits: SupportsIndex) -> "Vec2[float]": ...
