@@ -11,7 +11,7 @@ origin = db.Vec2(origin_x, origin_z)
 destination = db.Vec2(destination_x, destination_z)
 offset = destination - origin
 closest_boat_angles = {
-    index: (angle, (db.Vec2.ZERODEG.rotate(angle) * offset.length()).round())
+    index: (angle, offset.project(db.Vec2.from_polar(1.0, angle)).round())
     for index, angle in enumerate(db.BoatAngle.closest_to(offset.angle(), 4))
 }
 
