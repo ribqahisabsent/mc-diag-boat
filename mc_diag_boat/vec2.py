@@ -2,7 +2,6 @@ from typing import ClassVar, Generic, Self, SupportsIndex, TypeVar, overload
 from dataclasses import dataclass
 from math import radians, degrees, sin, cos, atan2, dist
 import skimage.draw
-from .reporting import SIG_FIGS
 
 
 _T = TypeVar("_T", int, float)
