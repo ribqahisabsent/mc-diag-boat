@@ -37,3 +37,12 @@ class BoatAngle(float):
         mc_angle = (self + 180) % 360 - 180
         return round(mc_angle / ANGLE_STEP) % 256
 
+    def placement_range(self) -> tuple[Self, Self] | None:
+        if self == 180.0 or self == -180.0:
+            return None
+        if self < 0.0:
+            return self.from_index(self.index() - 1), self
+        if self > 0.0:
+            return self, self.from_index(self.index() + 1)
+        return self.from_index(-1), self.from_index(1)
+
