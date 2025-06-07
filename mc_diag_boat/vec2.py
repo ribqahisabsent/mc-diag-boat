@@ -19,6 +19,25 @@ class Vec2(Generic[_T]):
     ZERO: ClassVar["Vec2[int]"]
     ZERODEG: ClassVar["Vec2[int]"]
 
+    @classmethod
+    def from_polar(cls, r: float, phi: float) -> "Vec2[float]":
+        """Create a `Vec2[float]` from polar coordinate values.
+
+        Parameters
+        ----------
+        `r` : `float`
+            The radius, or length, of the new vector.
+        `phi` : `float`
+            The angle, in degrees, of the new vector, in terms of
+            Minecraft horizontal facing direction.
+
+        Returns
+        -------
+        `vector` : `Vec2[float]`
+            A vector with the given length and angle.
+        """
+        return cls.ZERODEG.rotate(phi) * r
+
     @overload
     def __add__(self, other: "Vec2[int]") -> Self: ...
     @overload
