@@ -34,7 +34,7 @@ while True:
     except Exception as e:
         print(type(e).__name__, e)
 
-schem_name = db.name_schematic(origin, destination)
+schem_name = db.name_schematic(origin, origin + chosen_angle[1])
 schem = db.generate_schematic(chosen_angle[1], gap_size)
 schem.save(schem_name + ".litematica")
 print("Saved schematic", schem_name)
