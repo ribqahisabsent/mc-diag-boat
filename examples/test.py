@@ -46,13 +46,17 @@ if False:
 
 if False:
     v = Vec2(2.4, 2.7)
-    iv = v.rounded()
-    fv = v.rounded(0)
+    iv = v.round()
+    fv = v.round(0)
     print(iv, fv)
     v2 = iv - fv
     print(v2)
     v2 = iv - iv
     print(v2)
+    dot = iv.dot(fv)
+    cross = iv.cross(fv)
+    print(dot)
+    print(cross)
 
 if False:
     v = Vec2.ZERODEG.rotated(180)
@@ -83,6 +87,12 @@ if False:
     print(v, v.angle())
 
 if True:
+    v1 = Vec2(2.0, 50.1)
+    v2 = Vec2(0.0, 501.0)
+    proj = v1.project(v2)
+    print(proj)
+
+if False:
     for i in range(0, 360, 16):
         angle = BoatAngle.from_index(i)
         print(angle)
