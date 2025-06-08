@@ -1,7 +1,7 @@
 import numpy as np
 import skimage.draw
 from mc_diag_boat.vec2 import Vec2
-from mc_diag_boat.boat_angle import BoatAngle
+from mc_diag_boat.angle import BoatAngle
 from mc_diag_boat.schematic import add_gaps, cut_regions, generate_schematic
 
 

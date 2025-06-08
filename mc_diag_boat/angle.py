@@ -1,19 +1,36 @@
-from typing import Self, overload
+from typing import ClassVar, Self, overload
 from math import radians, sin
 
 
-ANGLE_STEP = 360 / 256
+BOAT_ANGLE_STEP = 360 / 256
 
 
-class BoatAngle(float):
+class Angle(float):
+    NORTH: ClassVar["Angle"]
+    WEST: ClassVar["Angle"]
+    SOUTH: ClassVar["Angle"]
+    EAST: ClassVar["Angle"]
+    ZERO: ClassVar["Angle"]
+
+    def unit_deviation(self, other: Self) -> float:
+        return 2 * sin(radians(abs(self - other) / 2))
+
+
+Angle.NORTH = Angle(180.0)
+Angle.WEST = Angle(90.0)
+Angle.SOUTH = Angle(0.0)
+Angle.EAST = Angle(-90.0)
+
+
+class BoatAngle(Angle):
     @staticmethod
     def closest_index(angle: float) -> int:
         mc_angle = (angle + 180) % 360 - 180
-        return round(mc_angle / ANGLE_STEP) % 256
+        return round(mc_angle / BOAT_ANGLE_STEP) % 256
 
     @classmethod
     def from_index(cls, index: int) -> Self:
-        return cls(((index + 128) % 256 - 128) * ANGLE_STEP)
+        return cls(((index + 128) % 256 - 128) * BOAT_ANGLE_STEP)
 
     @classmethod
     @overload
@@ -36,7 +53,7 @@ class BoatAngle(float):
 
     def index(self) -> int:
         mc_angle = (self + 180) % 360 - 180
-        return round(mc_angle / ANGLE_STEP) % 256
+        return round(mc_angle / BOAT_ANGLE_STEP) % 256
 
     def placement_range(self) -> tuple[Self, Self] | None:
         if self == 180.0 or self == -180.0:
@@ -46,7 +63,4 @@ class BoatAngle(float):
         if self > 0.0:
             return self, self.from_index(self.index() + 1)
         return self.from_index(-1), self.from_index(1)
-
-    def unit_deviation(self, other: float) -> float:
-        return 2 * sin(radians(abs(self - other)))
 
