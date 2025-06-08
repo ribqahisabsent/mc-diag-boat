@@ -99,3 +99,10 @@ if False:
         print(BoatAngle.closest_to(angle, 5))
     print(BoatAngle.closest_to(180, 5))
 
+if True:
+    a1 = BoatAngle.SOUTH
+    a2 = BoatAngle.EAST
+    print(a1, a2)
+    ud = a1.unit_deviation(a2)
+    print(ud)
+
