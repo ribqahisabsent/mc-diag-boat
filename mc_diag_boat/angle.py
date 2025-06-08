@@ -16,7 +16,7 @@ class Angle(float):
         return 2 * sin(radians(abs(self - other) / 2))
 
 
-Angle.NORTH = Angle(180.0)
+Angle.NORTH = Angle(-180.0)
 Angle.WEST = Angle(90.0)
 Angle.SOUTH = Angle(0.0)
 Angle.EAST = Angle(-90.0)

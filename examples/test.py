@@ -102,7 +102,12 @@ if False:
 if True:
     a1 = BoatAngle.SOUTH
     a2 = BoatAngle.EAST
+    a3 = BoatAngle(1)
     print(a1, a2)
+    print(a3)
     ud = a1.unit_deviation(a2)
     print(ud)
+    a4 = a3 + a2
+    print(a4)
+    print(-a4)
 
