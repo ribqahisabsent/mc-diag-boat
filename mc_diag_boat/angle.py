@@ -1,4 +1,4 @@
-from typing import ClassVar, Self, overload
+from typing import Callable, ClassVar, Self, overload
 from math import radians, sin
 
 
@@ -23,14 +23,14 @@ Angle.EAST = Angle(-90.0)
 
 
 class BoatAngle(Angle):
+    def __new__(cls, index: int) -> Self:
+        obj = super().__new__(cls, ((index + 128) % 256 - 128) * BOAT_ANGLE_STEP)
+        return obj
+
     @staticmethod
     def closest_index(angle: float) -> int:
         mc_angle = (angle + 180) % 360 - 180
         return round(mc_angle / BOAT_ANGLE_STEP) % 256
-
-    @classmethod
-    def from_index(cls, index: int) -> Self:
-        return cls(((index + 128) % 256 - 128) * BOAT_ANGLE_STEP)
 
     @classmethod
     @overload
@@ -43,13 +43,13 @@ class BoatAngle(Angle):
         mc_angle = (angle + 180) % 360 - 180
         if n is None:
             closest_index = cls.closest_index(mc_angle)
-            closest_to = cls.from_index(closest_index)
+            closest_to = cls(closest_index)
             return closest_to
         sorted_indices = sorted([
-            (index, ((cls.from_index(index) - mc_angle + 180) % 360) - 180)
+            (index, ((cls(index) - mc_angle + 180) % 360) - 180)
             for index in range(256)
         ], key=lambda x: abs(x[1]))
-        return [cls.from_index(index) for index, _ in sorted_indices[:n]]
+        return [cls(index) for index, _ in sorted_indices[:n]]
 
     def index(self) -> int:
         mc_angle = (self + 180) % 360 - 180
@@ -59,8 +59,36 @@ class BoatAngle(Angle):
         if self == 180.0 or self == -180.0:
             return None
         if self < 0.0:
-            return self.from_index(self.index() - 1), self
+            return type(self)(self.index() - 1), self
         if self > 0.0:
-            return self, self.from_index(self.index() + 1)
-        return self.from_index(-1), self.from_index(1)
+            return self, type(self)(self.index() + 1)
+        return type(self)(-1), type(self)(1)
+
+
+def block_arith() -> Callable:
+    def blocked(self, *args, **kwargs):
+        raise TypeError("BoatAngle should not be modified arithmetically.")
+    return blocked
+
+
+for method in [
+    "__add__",
+    "__radd__",
+    "__sub__",
+    "__rsub__",
+    "__mul__",
+    "__rmul__",
+    "__truediv__",
+    "__rtruediv__",
+    "__floordiv__",
+    "__rfloordiv__",
+    "__mod__",
+    "__rmod__",
+    "__pow__",
+    "__rpow__",
+    "__neg__",
+    "__pos__",
+    "__abs__",
+]:
+    setattr(BoatAngle, method, block_arith())
 
