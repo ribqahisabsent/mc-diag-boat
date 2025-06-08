@@ -1,6 +1,6 @@
 from .schematic import name_schematic, generate_schematic
 from .vec2 import Vec2
-from .angle import Angle, BoatAngle
+from .angle import Angle
 
 
 __all__ = [
@@ -8,6 +8,5 @@ __all__ = [
     "generate_schematic",
     "Vec2",
     "Angle",
-    "BoatAngle",
 ]
 

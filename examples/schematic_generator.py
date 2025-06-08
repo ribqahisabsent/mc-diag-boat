@@ -12,7 +12,7 @@ destination = db.Vec2(destination_x, destination_z)
 offset = destination - origin
 closest_boat_angles = {
     index: (angle, offset.project(db.Vec2.from_polar(1.0, angle)).round())
-    for index, angle in enumerate(db.BoatAngle.closest_to(offset.angle(), 4))
+    for index, angle in enumerate(offset.angle().closest_boat_angle(4))
 }
 
 print(f"""
@@ -40,7 +40,7 @@ schem.save(schem_name + ".litematica")
 print("Saved schematic", schem_name)
 
 print(f"""
-Boat placement angle range: {chosen_angle[0].placement_range()}
-    F3 angle while in boat: {round(chosen_angle[0], 1)}
+Boat placement angle range: {chosen_angle[0].boat_placement_range()}
+    F3 angle while in boat: {round(chosen_angle[0], 1):.1f}
 """)
 

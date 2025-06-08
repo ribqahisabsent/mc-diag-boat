@@ -4,7 +4,7 @@ from os.path import isfile
 from . import constants
 from . import reporting
 from .vec2 import Vec2
-from .angle import BoatAngle
+from .angle import Angle
 
 
 # Format origin and destination coordinates as tuple[int, int]
@@ -88,7 +88,7 @@ def max_manual_angle_error(target_angle: float) -> float:
 def boat_metrics(optimal_angle: float, boat_angle_adjust: int = 0) -> tuple[float, float, float]:
     #boat_angle_index = (closest_boat_angle_index(optimal_angle) + boat_angle_adjust) % len(constants.BOAT_ANGLES)
     #boat_angle = constants.BOAT_ANGLES[boat_angle_index]
-    boat_angle = BoatAngle(BoatAngle.closest_index(optimal_angle) + boat_angle_adjust)
+    boat_angle = Angle(optimal_angle).closest_boat_angle()
     angle_error = optimal_angle - boat_angle
     block_error = get_block_error(angle_error)
     return boat_angle, angle_error, block_error

@@ -2,6 +2,7 @@ from typing import ClassVar, Generic, Self, SupportsIndex, TypeVar, overload
 from dataclasses import dataclass
 from math import radians, degrees, sin, cos, atan2, dist
 import skimage.draw
+from .angle import Angle
 
 
 _T = TypeVar("_T", int, float)
@@ -90,7 +91,7 @@ class Vec2(Generic[_T]):
         """
         return dist((0, 0), (self.x, self.z))
 
-    def angle(self) -> float:
+    def angle(self) -> Angle:
         """Get the angle of this vector.
 
         Returns
@@ -99,7 +100,7 @@ class Vec2(Generic[_T]):
             The angle, in degrees, of this vector in terms of
             Minecraft horizontal facing direction (0.0 == South).
         """
-        return -1 * degrees(atan2(self.x, self.z))
+        return Angle(-1 * degrees(atan2(self.x, self.z)))
 
     def rotate(self, angle: float) -> "Vec2[float]":
         """Return a rotated version of this vector.

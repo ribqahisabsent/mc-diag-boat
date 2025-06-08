@@ -1,94 +1,177 @@
-from typing import Callable, ClassVar, Self, overload
+from typing import ClassVar, Self, overload
+from dataclasses import dataclass
 from math import radians, sin
 
 
-BOAT_ANGLE_STEP = 360 / 256
+@dataclass(frozen=True, slots=True)
+class Angle:
+    degrees: float
 
-
-class Angle(float):
+    BOAT_ANGLE_STEP: ClassVar["Angle"]
     NORTH: ClassVar["Angle"]
     WEST: ClassVar["Angle"]
     SOUTH: ClassVar["Angle"]
     EAST: ClassVar["Angle"]
     ZERO: ClassVar["Angle"]
+    BOAT_ANGLES: ClassVar[list["Angle"]]
 
-    def unit_deviation(self, other: Self) -> float:
-        return 2 * sin(radians(abs(self - other) / 2))
+    def __post_init__(self):
+        normalized = (self.degrees + 180) % 360 - 180
+        object.__setattr__(self, "degrees", normalized)
+
+    def __add__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((self.degrees + other + 180) % 360 - 180)
+
+    __radd__ = __add__
+
+    def __sub__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((self.degrees - other + 180) % 360 - 180)
+
+    def __rsub__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((other - self.degrees + 180) % 360 - 180)
+
+    def __mul__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((self.degrees * other + 180) % 360 - 180)
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((self.degrees / other + 180) % 360 - 180)
+
+    def __rtruediv__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((other / self.degrees + 180) % 360 - 180)
+
+    def __floordiv__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((self.degrees // other + 180) % 360 - 180)
+
+    def __rfloordiv__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((other // self.degrees + 180) % 360 - 180)
+
+    def __mod__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((self.degrees % other + 180) % 360 - 180)
+
+    def __rmod__(self, other: "float | Angle") -> Self:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return type(self)((other % self.degrees + 180) % 360 - 180)
+
+    def __pos__(self) -> Self:
+        return type(self)(+self.degrees)
+
+    def __neg__(self) -> Self:
+        return type(self)(-self.degrees)
+
+    def __abs__(self) -> Self:
+        return type(self)(abs(self.degrees))
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return self.degrees == other
+
+    def __ne__(self, other: object) -> bool:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return self.degrees != other
+
+    def __lt__(self, other: "float | Angle") -> bool:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return self.degrees < other
+
+    def __le__(self, other: "float | Angle") -> bool:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return self.degrees <= other
+
+    def __gt__(self, other: "float | Angle") -> bool:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return self.degrees > other
+
+    def __ge__(self, other: "float | Angle") -> bool:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return self.degrees >= other
+
+    def __int__(self) -> int:
+        return int(self.degrees)
+
+    def __float__(self) -> float:
+        return float(self.degrees)
+
+    def __bool__(self) -> bool:
+        return bool(self.degrees)
+
+    def __str__(self) -> str:
+        return str(self.degrees)
+
+    def __repr__(self) -> str:
+        return self.degrees.__repr__()
+
+    def __round__(self, n: int) -> Self:
+        return type(self)(round(self.degrees, n))
+
+    def angular_dist(self, other: "float | Angle") -> "Angle":
+        if isinstance(other, Angle):
+            other = other.degrees
+        return Angle((other - self.degrees + 180) % 360 - 180)
+
+    def unit_deviation(self, other: "float | Angle") -> float:
+        if isinstance(other, Angle):
+            other = other.degrees
+        return 2 * sin(radians(abs(self.degrees - other) / 2))
+
+    @overload
+    def closest_boat_angle(self) -> "Angle": ...
+    @overload
+    def closest_boat_angle(self, n: int) -> list["Angle"]: ...
+    def closest_boat_angle(self, n: int | None = None) -> "Angle | list[Angle]":
+        sorted_boat_angles = sorted(
+            self.BOAT_ANGLES,
+            key=lambda x: abs(self.angular_dist(x))
+        )
+        if n is None or n == 1:
+            return sorted_boat_angles[0]
+        if n == -1:
+            n = 256
+        if 0 < n <= 256:
+            return sorted_boat_angles[:n]
+        raise ValueError("n must be -1 or in [1, 256]")
+
+    def boat_placement_range(self) -> tuple["Angle", "Angle"] | None:
+        boat_angle = self.closest_boat_angle()
+        if boat_angle == 180.0 or boat_angle == -180.0:
+            return None
+        if boat_angle < 0.0:
+            return boat_angle - self.BOAT_ANGLE_STEP, self
+        if boat_angle > 0.0:
+            return self, boat_angle + self.BOAT_ANGLE_STEP
+        return -self.BOAT_ANGLE_STEP, self.BOAT_ANGLE_STEP
 
 
+Angle.BOAT_ANGLE_STEP = Angle(360 / 256)
 Angle.NORTH = Angle(-180.0)
 Angle.WEST = Angle(90.0)
 Angle.SOUTH = Angle(0.0)
 Angle.EAST = Angle(-90.0)
-
-
-class BoatAngle(Angle):
-    def __new__(cls, index: int) -> Self:
-        obj = super().__new__(cls, ((index + 128) % 256 - 128) * BOAT_ANGLE_STEP)
-        return obj
-
-    @staticmethod
-    def closest_index(angle: float) -> int:
-        mc_angle = (angle + 180) % 360 - 180
-        return round(mc_angle / BOAT_ANGLE_STEP) % 256
-
-    @classmethod
-    @overload
-    def closest_to(cls, angle: float) -> Self: ...
-    @classmethod
-    @overload
-    def closest_to(cls, angle: float, n: int) -> list[Self]: ...
-    @classmethod
-    def closest_to(cls, angle: float, n: int | None = None) -> Self | list[Self]:
-        mc_angle = (angle + 180) % 360 - 180
-        if n is None:
-            closest_index = cls.closest_index(mc_angle)
-            closest_to = cls(closest_index)
-            return closest_to
-        sorted_indices = sorted([
-            (index, ((cls(index) - mc_angle + 180) % 360) - 180)
-            for index in range(256)
-        ], key=lambda x: abs(x[1]))
-        return [cls(index) for index, _ in sorted_indices[:n]]
-
-    def index(self) -> int:
-        mc_angle = (self + 180) % 360 - 180
-        return round(mc_angle / BOAT_ANGLE_STEP) % 256
-
-    def placement_range(self) -> tuple[Self, Self] | None:
-        if self == 180.0 or self == -180.0:
-            return None
-        if self < 0.0:
-            return type(self)(self.index() - 1), self
-        if self > 0.0:
-            return self, type(self)(self.index() + 1)
-        return type(self)(-1), type(self)(1)
-
-
-def block_arith() -> Callable:
-    def blocked(self, *args, **kwargs):
-        raise TypeError("BoatAngle should not be modified arithmetically.")
-    return blocked
-
-
-for method in [
-    "__add__",
-    "__radd__",
-    "__sub__",
-    "__rsub__",
-    "__mul__",
-    "__rmul__",
-    "__truediv__",
-    "__rtruediv__",
-    "__floordiv__",
-    "__rfloordiv__",
-    "__mod__",
-    "__rmod__",
-    "__pow__",
-    "__rpow__",
-    "__neg__",
-    "__pos__",
-    "__abs__",
-]:
-    setattr(BoatAngle, method, block_arith())
+Angle.BOAT_ANGLES = [index * Angle.BOAT_ANGLE_STEP for index in range(-128, 128)]
 
