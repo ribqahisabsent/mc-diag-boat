@@ -183,6 +183,11 @@ class Vec2(Generic[_T]):
         """
         return self.x, self.z
 
+    def unit_deviation(self, other: "Vec2") -> float:
+        if self == Vec2.ZERO or other == Vec2.ZERO:
+            raise ValueError("Cannot determine deviation of zero vector.")
+        return (self.normalize() - other.normalize()).length()
+
     def raster(self, origin: "Vec2 | None" = None, block_coords: bool = True) -> list["Vec2[int]"]:
         """Get the raster of the vector.
 

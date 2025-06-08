@@ -1,4 +1,5 @@
 from typing import Self, overload
+from math import radians, sin
 
 
 ANGLE_STEP = 360 / 256
@@ -45,4 +46,7 @@ class BoatAngle(float):
         if self > 0.0:
             return self, self.from_index(self.index() + 1)
         return self.from_index(-1), self.from_index(1)
+
+    def unit_deviation(self, other: float) -> float:
+        return 2 * sin(radians(abs(self - other)))
 
