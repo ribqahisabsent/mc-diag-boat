@@ -23,9 +23,9 @@ class BoatAngle(float):
     @classmethod
     def closest_to(cls, angle: float, n: int | None = None) -> Self | list[Self]:
         mc_angle = (angle + 180) % 360 - 180
-        closest_index = cls.closest_index(mc_angle)
-        closest_to = cls.from_index(closest_index)
         if n is None:
+            closest_index = cls.closest_index(mc_angle)
+            closest_to = cls.from_index(closest_index)
             return closest_to
         sorted_indices = sorted([
             (index, ((cls.from_index(index) - mc_angle + 180) % 360) - 180)
