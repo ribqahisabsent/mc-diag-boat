@@ -1,5 +1,6 @@
 from typing import Iterable, Self
 from dataclasses import dataclass
+from functools import cached_property
 from .vec2 import Vec2
 
 
@@ -23,24 +24,20 @@ class Pattern(list[Vec2[int]]):
         return False
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True)
 class PatternGenerator:
     target: Vec2
-    max_pattern_len: int
-    patterns: list[Pattern]
+    max_pattern_len: int = 64
 
-    def __init__(self, target: Vec2, max_pattern_len: int = 64) -> None:
-        self.target = target
-        self.max_pattern_len = max_pattern_len
-        self.patterns = []
-
-    def generate(self) -> None:
+    @cached_property
+    def patterns(self) -> list[Pattern]:
         raster = self.target.raster()
-        self.patterns = [
+        return [
             Pattern(raster[:length], self.target)
             for length in range(2, min(len(raster), self.max_pattern_len + 1))
         ]
 
+    @cached_property
     def pareto_front(self) -> list[Pattern]:
         return [
             pattern
