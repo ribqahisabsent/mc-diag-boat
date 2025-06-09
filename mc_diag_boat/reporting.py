@@ -1,6 +1,19 @@
-from math import sin, radians
+from typing import Sequence
 import numpy as np
 import matplotlib.pyplot as plt
+
+
+def pretty_sequences(sequences: Sequence[Sequence]) -> Sequence[str]:
+    if len({len(tpl) for tpl in sequences}) > 1:
+        raise ValueError("All tuples must be the same length")
+    item_lengths = [max(len(str(item)) for item in col) for col in zip(*sequences)]
+    return [
+        "  ".join(
+            f"{str(item):<{item_lengths[col]}}"
+            for col, item in enumerate(row)
+        )
+        for row in sequences
+    ]
 
 
 SIG_FIGS = 4
