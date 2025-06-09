@@ -149,6 +149,8 @@ class Vec2(Generic[_T]):
         return self.x * other.z - self.z * other.x
 
     def project(self, other: "Vec2") -> "Vec2[float]":
+        if other == Vec2.ZERO:
+            raise ValueError("`other` must be a nonzero Vec2")
         return self.dot(other) / other.dot(other) * other
 
     @overload
