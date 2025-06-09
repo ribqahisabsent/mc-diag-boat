@@ -113,8 +113,11 @@ if False:
 
 if True:
     a1 = Angle.SOUTH
-    a2 = Angle(3.9)
+    a2 = Angle(532343.9)
+    print(a2)
     bas = a1.closest_boat_angle(5)
     print(bas)
     print(bool(0.0), bool(1.0))
+    bas2 = bas[0].closest_boat_angle()
+    print(bas2)
 
