@@ -1,5 +1,4 @@
 from typing import ClassVar, Self, overload
-from math import radians, sin
 
 
 class Angle(float):
@@ -22,9 +21,6 @@ class Angle(float):
 
     def angular_dist(self, other: float) -> "Angle":
         return Angle((other - self + 180) % 360 - 180)
-
-    def unit_deviation(self, other: float) -> float:
-        return 2 * sin(radians(abs(self - other) / 2))
 
     @overload
     def closest_boat_angle(self) -> "Angle": ...
