@@ -5,6 +5,7 @@ from mc_diag_boat.angle import Angle
 from mc_diag_boat.pattern import PatternGenerator
 from mc_diag_boat.schematic import add_gaps, cut_regions, generate_schematic
 from mc_diag_boat.reporting import pretty_sequences
+from mc_diag_boat.input import loop_input
 
 
 if False:
@@ -123,7 +124,7 @@ if False:
     bas2 = bas[0].closest_boat_angle()
     print(bas2)
 
-if True:
+if False:
     trgt = Vec2(-2050.0, -1607)
     pg = PatternGenerator(trgt)
     print(len(pg.patterns))
@@ -143,4 +144,10 @@ if True:
     pretty_pfront = pretty_sequences(pf_tuples)
     for p in pretty_pfront:
         print(f"  {p}")
+
+if True:
+    options = {0, 1, 2, 3, 4}
+    inp = loop_input(f"choices: {options}: ", options)
+    inp = loop_input(f"choices: {options}: ")
+    print(inp, type(inp))
 
