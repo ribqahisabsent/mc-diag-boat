@@ -45,3 +45,15 @@ class PatternGenerator:
             if not any([o_pattern.dominates(pattern) for o_pattern in self.patterns])
         ]
 
+    @staticmethod
+    def len_sorted(patterns: list[Pattern], short2long: bool = True) -> list[Pattern]:
+        if short2long:
+            return sorted(patterns, key=lambda p: len(p))
+        return sorted(patterns, key=lambda p: -len(p))
+
+    @staticmethod
+    def deviation_sorted(patterns: list[Pattern], close2far: bool = True) -> list[Pattern]:
+        if close2far:
+            return sorted(patterns, key=lambda p: p.deviation())
+        return sorted(patterns, key=lambda p: -p.deviation())
+
