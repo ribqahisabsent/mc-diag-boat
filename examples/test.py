@@ -2,7 +2,9 @@ import numpy as np
 import skimage.draw
 from mc_diag_boat.vec2 import Vec2
 from mc_diag_boat.angle import Angle
+from mc_diag_boat.pattern import PatternGenerator
 from mc_diag_boat.schematic import add_gaps, cut_regions, generate_schematic
+from mc_diag_boat.reporting import pretty_sequences
 
 
 if False:
@@ -111,7 +113,7 @@ if False:
     print(a4)
     print(-a4)
 
-if True:
+if False:
     a1 = Angle.SOUTH
     a2 = Angle(532343.9)
     print(a2)
@@ -120,4 +122,25 @@ if True:
     print(bool(0.0), bool(1.0))
     bas2 = bas[0].closest_boat_angle()
     print(bas2)
+
+if True:
+    trgt = Vec2(-2050.0, -1607)
+    pg = PatternGenerator(trgt)
+    print(len(pg.patterns))
+    pg.generate()
+    print(len(pg.patterns))
+    pfront = pg.pareto_front()
+    print(len(pfront))
+    pf_tuples = [(
+        "Length",
+        "Deviation",
+        "Angular Deviation",
+    )] + [(
+        len(p),
+        p.deviation(),
+        p[-1].angle() - trgt.angle(),
+    ) for p in pfront]
+    pretty_pfront = pretty_sequences(pf_tuples)
+    for p in pretty_pfront:
+        print(f"  {p}")
 
