@@ -124,13 +124,12 @@ if False:
     bas2 = bas[0].closest_boat_angle()
     print(bas2)
 
-if False:
+if True:
     trgt = Vec2(-2050.0, -1607)
     pg = PatternGenerator(trgt)
     print(len(pg.patterns))
-    pg.generate()
     print(len(pg.patterns))
-    pfront = pg.pareto_front()
+    pfront = pg.pareto_front
     print(len(pfront))
     pf_tuples = [(
         "Length",
@@ -144,8 +143,14 @@ if False:
     pretty_pfront = pretty_sequences(pf_tuples)
     for p in pretty_pfront:
         print(f"  {p}")
+    sort = pg.len_sorted(pg.patterns, short2long=False)
+    print(len(sort[0]), sort[0].deviation())
+    print(len(sort[-1]), sort[-1].deviation())
+    sort = pg.deviation_sorted(pg.patterns)
+    print(len(sort[0]), sort[0].deviation())
+    print(len(sort[-1]), sort[-1].deviation())
 
-if True:
+if False:
     options = {0, 1, 2, 3, 4}
     inp = loop_input(f"choices: {options}: ", options)
     inp = loop_input(f"choices: {options}: ")
