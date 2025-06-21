@@ -3,7 +3,7 @@ from .vec2 import Vec2
 from .angle import Angle
 from .pattern import Pattern, PatternGenerator
 from .input import loop_input, vec2_input
-from .report import pretty_sequences, plot_pattern, show_plots
+from .report import pretty_seqs, plot_pattern, show_plots
 
 
 __all__ = [
@@ -15,7 +15,7 @@ __all__ = [
     "PatternGenerator",
     "loop_input",
     "vec2_input",
-    "pretty_sequences",
+    "pretty_seqs",
     "plot_pattern",
     "show_plots",
 ]

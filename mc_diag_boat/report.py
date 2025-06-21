@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Literal, Sequence
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
@@ -8,18 +8,40 @@ from .pattern import Pattern
 MIN_COLOR = 0.12
 
 
-def pretty_sequences(sequences: Sequence[Sequence]) -> Sequence[str]:
-    if len({len(tpl) for tpl in sequences}) > 1:
-        raise ValueError("All tuples must be the same length")
+def pretty_seqs(
+    sequences: Sequence[Sequence],
+    align: Literal["L", "R", "C"] | tuple[Literal["L", "R", "C"]] = "L",
+) -> Sequence[str]:
+    sep = " "
+    if len({len(sequence) for sequence in sequences}) > 1:
+        raise ValueError("All sequences must be the same length")
     item_lengths = [max(len(str(item)) for item in col) for col in zip(*sequences)]
-    return [
-        "  ".join(
-            f"{str(item):<{item_lengths[col]}}"
-            for col, item in enumerate(row)
-        )
-        for row in sequences
-    ]
-
+    if align == "L":
+        return [
+            sep.join(f"{str(item):<{item_lengths[col]}}" for col, item in enumerate(row))
+            for row in sequences
+        ]
+    if align == "R":
+        return [
+            sep.join(f"{str(item):>{item_lengths[col]}}" for col, item in enumerate(row))
+            for row in sequences
+        ]
+    if align == "C":
+        return [
+            sep.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row))
+            for row in sequences
+        ]
+    if isinstance(align, tuple) and len(align) != len(sequences[0]):
+        raise ValueError("`align` must be the same length as each sequence")
+    rows: list[str] = []
+    for index, row in enumerate(sequences):
+        if align[index] == "L":
+            rows.append(sep.join(f"{str(item):<{item_lengths[col]}}" for col, item in enumerate(row)))
+        if align[index] == "R":
+            rows.append(sep.join(f"{str(item):>{item_lengths[col]}}" for col, item in enumerate(row)))
+        if align[index] == "C":
+            rows.append(sep.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row)))
+    return rows
 
 # Display a 2D map representing the blocks in a given pattern
 def plot_pattern(pattern: Pattern) -> Figure:

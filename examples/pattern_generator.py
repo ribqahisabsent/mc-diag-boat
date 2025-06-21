@@ -24,8 +24,13 @@ Offset: {offset}
 Angle: {offset.angle()}
 Boat angle error: {offset - angle[1]}
 Patterns for boat angle:""")
-    for index, pattern in patterns.items():
-        print(f"    {index} : [n_blocks: {len(pattern)} , error: {pattern.deviation()} blocks]")
+    #for index, pattern in patterns.items():
+    #    print(f"    {index} : [n_blocks: {len(pattern)} , error: {pattern.deviation()} blocks]")
+    for line in db.report.pretty_seqs([
+        (index, ": n_blocks:", len(pattern) - 1, " error:", f"{pattern.deviation()} blocks")
+        for index, pattern in patterns.items()
+    ]):
+        print("   ", line)
     choice = db.loop_input(
         "\nEnter index of desired pattern (default, choose other boat angle): ",
         {index for index in patterns.keys()},
