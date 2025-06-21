@@ -11,7 +11,7 @@ class Pattern(list[Vec2[int]]):
 
     def deviation(self) -> float:
         if len(self) <= 1:
-            raise IndexError("Pattern with length 1 has no points to determine deviation")
+            raise IndexError("Pattern with length <2 has no points to determine deviation")
         return (self.target - self.target.project(self[-1])).length()
 
     def dominates(self, other: Self) -> bool:
