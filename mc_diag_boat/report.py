@@ -1,6 +1,11 @@
 from typing import Sequence
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from .pattern import Pattern
+
+
+MIN_COLOR = 0.12
 
 
 def pretty_sequences(sequences: Sequence[Sequence]) -> Sequence[str]:
@@ -16,8 +21,56 @@ def pretty_sequences(sequences: Sequence[Sequence]) -> Sequence[str]:
     ]
 
 
+# Display a 2D map representing the blocks in a given pattern
+def plot_pattern(pattern: Pattern) -> Figure:
+    pattern_space = np.zeros((abs(pattern[-1].x) + 1, abs(pattern[-1].z) + 1))
+    for index, point in enumerate(pattern[:-1]):
+        pattern_space[(abs(point.x), abs(point.z))] = (len(pattern) - index) / len(pattern) + MIN_COLOR
+    pattern_space[(abs(pattern[-1].x), abs(pattern[-1].z))] = 1.0 + MIN_COLOR
+    pattern_space = np.transpose(pattern_space)
+    fig, ax = plt.subplots()
+    ax.imshow(pattern_space, cmap="turbo", interpolation="nearest")
+    if pattern[-1].x < 0:
+        fig.gca().invert_xaxis()
+    if pattern[-1].z < 0:
+        fig.gca().invert_yaxis()
+    ax.set_title("Start at red (0, 0), go through rainbow\n(lone red is start of next iteration)")
+    ax.set_xlabel("West < - > East")
+    ax.set_ylabel("South < - > North")
+    ax.set_xticks(
+        [i for i in range(abs(pattern[-1].x) + 1)],
+        [str(i) for i in range(abs(pattern[-1].x) + 1)],
+        rotation=90
+    )
+    ax.set_yticks([i for i in range(abs(pattern[-1].z) + 1)])
+    return fig
+
+
+def show_plots() -> None:
+    plt.show()
+
+
+# Display a 2D map representing the blocks in a given pattern
+#def graph_pattern(pattern: Pattern) -> None:
+#    pattern_space = np.zeros((abs(pattern[-1].x) + 1, abs(pattern[-1].z) + 1))
+#    for index, point in enumerate(pattern[:-1]):
+#        pattern_space[(abs(point.x), abs(point.z))] = (len(pattern) - index) / len(pattern) + MIN_COLOR
+#    pattern_space[(abs(pattern[-1].x), abs(pattern[-1].z))] = 1.0 + MIN_COLOR
+#    pattern_space = np.transpose(pattern_space)
+#    plt.imshow(pattern_space, cmap='turbo', interpolation='nearest')
+#    if pattern[-1].x < 0:
+#        plt.gca().invert_xaxis()
+#    if pattern[-1].z < 0:
+#        plt.gca().invert_yaxis()
+#    plt.title("Start at red (0, 0), go through rainbow\n(lone red is start of next iteration)")
+#    plt.xlabel("West < - > East")
+#    plt.ylabel("South < - > North")
+#    plt.xticks([i for i in range(abs(pattern[-1].x) + 1)])
+#    plt.yticks([i for i in range(abs(pattern[-1].z) + 1)])
+#    plt.show()
+
+
 SIG_FIGS = 4
-COLOR_MIN_VALUE = 0.12
 
 
 #class MCAngle:
@@ -73,26 +126,4 @@ def print_pattern(distance: float, pattern: list[list[int]], angle_error: float,
     print("    Found", len(pattern) - 1, "blocks long pattern:")
     print("    Iterations are offset by", get_offset(pattern[0], pattern[-1]), "blocks")
     print("    Errors (from boat direction):", format_errors(angle_error, block_error, distance))
-
-
-# Display a 2D map representing the blocks in a given pattern
-def graph_pattern(pattern: list[list[int]]) -> None:
-    pattern_space = np.zeros((abs(pattern[-1][0]) + 1, abs(pattern[-1][1]) + 1))
-    for site in range(len(pattern) - 1):
-        pattern_space[(abs(pattern[site][0]), abs(pattern[site][1]))] = (len(pattern) - site) / len(pattern) + COLOR_MIN_VALUE
-    pattern_space[(abs(pattern[-1][0]), abs(pattern[-1][1]))] = 1.0 + COLOR_MIN_VALUE
-    pattern_space = np.transpose(pattern_space)
-    plt.imshow(pattern_space, cmap='turbo', interpolation='nearest')
-    if pattern[-1][0] < 0:
-        plt.gca().invert_xaxis()
-    if pattern[-1][1] < 0:
-        plt.gca().invert_yaxis()
-    plt.title("Start at red (0, 0), go through rainbow\n(lone red is start of next iteration)")
-    plt.xlabel("West < - > East")
-    plt.ylabel("South < - > North")
-    plt.xticks([i for i in range(abs(pattern[-1][0]) + 1)])
-    plt.yticks([i for i in range(abs(pattern[-1][1]) + 1)])
-    plt.show()
-
-
 
