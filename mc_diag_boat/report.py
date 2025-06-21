@@ -11,24 +11,24 @@ MIN_COLOR = 0.12
 def pretty_seqs(
     sequences: Sequence[Sequence],
     align: Literal["L", "R", "C"] | tuple[Literal["L", "R", "C"]] = "L",
+    separator: str = " ",
 ) -> Sequence[str]:
-    sep = " "
     if len({len(sequence) for sequence in sequences}) > 1:
         raise ValueError("All sequences must be the same length")
     item_lengths = [max(len(str(item)) for item in col) for col in zip(*sequences)]
     if align == "L":
         return [
-            sep.join(f"{str(item):<{item_lengths[col]}}" for col, item in enumerate(row))
+            separator.join(f"{str(item):<{item_lengths[col]}}" for col, item in enumerate(row))
             for row in sequences
         ]
     if align == "R":
         return [
-            sep.join(f"{str(item):>{item_lengths[col]}}" for col, item in enumerate(row))
+            separator.join(f"{str(item):>{item_lengths[col]}}" for col, item in enumerate(row))
             for row in sequences
         ]
     if align == "C":
         return [
-            sep.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row))
+            separator.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row))
             for row in sequences
         ]
     if isinstance(align, tuple) and len(align) != len(sequences[0]):
@@ -36,11 +36,11 @@ def pretty_seqs(
     rows: list[str] = []
     for index, row in enumerate(sequences):
         if align[index] == "L":
-            rows.append(sep.join(f"{str(item):<{item_lengths[col]}}" for col, item in enumerate(row)))
+            rows.append(separator.join(f"{str(item):<{item_lengths[col]}}" for col, item in enumerate(row)))
         if align[index] == "R":
-            rows.append(sep.join(f"{str(item):>{item_lengths[col]}}" for col, item in enumerate(row)))
+            rows.append(separator.join(f"{str(item):>{item_lengths[col]}}" for col, item in enumerate(row)))
         if align[index] == "C":
-            rows.append(sep.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row)))
+            rows.append(separator.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row)))
     return rows
 
 # Display a 2D map representing the blocks in a given pattern
