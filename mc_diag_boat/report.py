@@ -34,7 +34,7 @@ def plot_pattern(pattern: Pattern) -> Figure:
         fig.gca().invert_xaxis()
     if pattern[-1].z < 0:
         fig.gca().invert_yaxis()
-    ax.set_title("Start at red (0, 0), go through rainbow\n(lone red is start of next iteration)")
+    ax.set_title("Start at red (0, 0), follow rainbow\n(lone red is start of next iteration)")
     ax.set_xlabel("West < - > East")
     ax.set_ylabel("South < - > North")
     ax.set_xticks(
@@ -48,26 +48,6 @@ def plot_pattern(pattern: Pattern) -> Figure:
 
 def show_plots() -> None:
     plt.show()
-
-
-# Display a 2D map representing the blocks in a given pattern
-#def graph_pattern(pattern: Pattern) -> None:
-#    pattern_space = np.zeros((abs(pattern[-1].x) + 1, abs(pattern[-1].z) + 1))
-#    for index, point in enumerate(pattern[:-1]):
-#        pattern_space[(abs(point.x), abs(point.z))] = (len(pattern) - index) / len(pattern) + MIN_COLOR
-#    pattern_space[(abs(pattern[-1].x), abs(pattern[-1].z))] = 1.0 + MIN_COLOR
-#    pattern_space = np.transpose(pattern_space)
-#    plt.imshow(pattern_space, cmap='turbo', interpolation='nearest')
-#    if pattern[-1].x < 0:
-#        plt.gca().invert_xaxis()
-#    if pattern[-1].z < 0:
-#        plt.gca().invert_yaxis()
-#    plt.title("Start at red (0, 0), go through rainbow\n(lone red is start of next iteration)")
-#    plt.xlabel("West < - > East")
-#    plt.ylabel("South < - > North")
-#    plt.xticks([i for i in range(abs(pattern[-1].x) + 1)])
-#    plt.yticks([i for i in range(abs(pattern[-1].z) + 1)])
-#    plt.show()
 
 
 SIG_FIGS = 4

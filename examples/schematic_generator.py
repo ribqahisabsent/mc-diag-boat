@@ -19,11 +19,14 @@ print(f"""
 Offset: {offset}
 Angle: {offset.angle()}
 Closest boat angles and offsets:""")
-for index, angle in closest_boat_angles.items():
-    print(f"    {index} : [offset: {angle[1]} , error: {angle[1] - offset} , angle: {angle[0]}]")
+for line in db.report.pretty_seqs([
+    (index, ": offset:", angle[1], " error:", angle[1] - offset, " angle:", angle[0])
+    for index, angle in closest_boat_angles.items()
+]):
+    print("   ", line)
 
 chosen_angle = closest_boat_angles[db.loop_input(
-    "\nEnter index of desired boat angle (default 0): ",
+    "\nEnter index of desired boat angle (default, 0): ",
     {index for index in closest_boat_angles.keys()},
     default=0,
 )]

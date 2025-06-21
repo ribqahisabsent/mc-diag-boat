@@ -27,7 +27,7 @@ Patterns for boat angle:""")
     for index, pattern in patterns.items():
         print(f"    {index} : [n_blocks: {len(pattern)} , error: {pattern.deviation()} blocks]")
     choice = db.loop_input(
-        "\nEnter index of desired pattern (default choose other boat angle): ",
+        "\nEnter index of desired pattern (default, choose other boat angle): ",
         {index for index in patterns.keys()},
         default=-1,
     )
@@ -47,7 +47,7 @@ Closest boat angles and offsets:""")
     for index, angle in boat_angles.items():
         print(f"    {index} : [offset: {angle[1]} , error: {angle[1] - offset} , angle: {angle[0]}]")
     return db.loop_input(
-        "\nEnter index of desired boat angle (default 0): ",
+        "\nEnter index of desired boat angle (default, 0): ",
         {index for index in boat_angles.keys()},
         default=0,
     )
