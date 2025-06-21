@@ -1,16 +1,19 @@
 from typing import Type, TypeVar, overload
+from .vec2 import Vec2
 
 
 _T = TypeVar("_T", str, int, float)
 
 
 @overload
-def loop_input(msg: str) -> str: ...
+def loop_input(msg: str, options: Type[_T] = str, default: _T | None = None) -> _T: ...
 @overload
-def loop_input(msg: str, options: Type[_T]) -> _T: ...
-@overload
-def loop_input(msg: str, options: set[_T]) -> _T: ...
-def loop_input(msg: str, options: Type[_T] | set[_T] | None = None) -> str | _T:
+def loop_input(msg: str, options: set[_T], default: _T | None = None) -> _T: ...
+def loop_input(
+    msg: str,
+    options: Type[_T] | set[_T] = str,
+    default: _T | None = None
+) -> str | _T:
     """Request user input until a valid input is given.
 
     Invalid inputs will raise errors, which print to terminal
@@ -27,6 +30,8 @@ def loop_input(msg: str, options: Type[_T] | set[_T] | None = None) -> str | _T:
         `_T` will be accepted, and the function will return in instance of `_T`.
         If `set[_T]`, only inputs contained in `options` will be accepted,
         and the function will return an instance of `_T`.
+    `default` : `_T`, optional
+        The default return value if nothing is entered.
     """
     if isinstance(options, type):
         typ = options
@@ -39,11 +44,19 @@ def loop_input(msg: str, options: Type[_T] | set[_T] | None = None) -> str | _T:
         typ = str
     while True:
         try:
-            inp = typ(input(msg))
+            inp = input(msg)
+            if default is not None and inp == "":
+                return default
+            inp = typ(inp)
             if isinstance(options, set) and inp not in options:
-                raise KeyError(f"{inp} not in options")
+                raise KeyError(f"{inp} is not an option")
         except Exception as e:
             print(f"{type(e).__name__}, {e}")
             continue
         return inp
+
+
+def vec2_input(msg: str, t: Type[int | float]) -> Vec2:
+    print(msg)
+    return Vec2(loop_input("    x: ", t), loop_input("    z: ", t))
 
