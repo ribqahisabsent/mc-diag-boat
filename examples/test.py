@@ -6,6 +6,7 @@ from mc_diag_boat.pattern import PatternGenerator
 from mc_diag_boat.schematic import add_gaps, cut_regions, generate_schematic
 from mc_diag_boat.reporting import pretty_sequences
 from mc_diag_boat.input import loop_input
+from mc_diag_boat.reporting import plot_pattern
 
 
 if False:
@@ -124,7 +125,7 @@ if False:
     bas2 = bas[0].closest_boat_angle()
     print(bas2)
 
-if True:
+if False:
     trgt = Vec2(-2050.0, -1607)
     pg = PatternGenerator(trgt)
     print(len(pg.patterns))
@@ -149,6 +150,13 @@ if True:
     sort = pg.deviation_sorted()
     print(len(sort[0]), sort[0].deviation())
     print(len(sort[-1]), sort[-1].deviation())
+
+
+if True:
+    trgt = Vec2(-205, 160)
+    pg = PatternGenerator(trgt)
+    pattern = pg.pareto_front[-3]
+    plot_pattern(pattern)
 
 if False:
     options = {0, 1, 2, 3, 4}

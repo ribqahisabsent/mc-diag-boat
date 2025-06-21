@@ -69,7 +69,8 @@ def display_pattern(angle: db.Angle, pattern: db.Pattern) -> None:
     print(f"""
 Boat placement angle range: {angle.boat_placement_range()}
     F3 angle while in boat: {round(angle, 1):.1f}""")
-    print("Pattern chart saving pending...")
+    db.report.plot_pattern(pattern)
+    db.report.show_plots()
 
 
 def main():
