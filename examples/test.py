@@ -143,10 +143,10 @@ if True:
     pretty_pfront = pretty_sequences(pf_tuples)
     for p in pretty_pfront:
         print(f"  {p}")
-    sort = pg.len_sorted(pg.patterns, short2long=False)
+    sort = pg.len_sorted(short2long=False)
     print(len(sort[0]), sort[0].deviation())
     print(len(sort[-1]), sort[-1].deviation())
-    sort = pg.deviation_sorted(pg.patterns)
+    sort = pg.deviation_sorted()
     print(len(sort[0]), sort[0].deviation())
     print(len(sort[-1]), sort[-1].deviation())
 
