@@ -10,33 +10,35 @@ gap_size = int(input("gap size: "))
 origin = db.Vec2(origin_x, origin_z)
 destination = db.Vec2(destination_x, destination_z)
 offset = destination - origin
-closest_boat_angles = {
-    index: (angle, offset.project(db.Vec2.from_polar(1.0, angle)).round())
-    for index, angle in enumerate(offset.angle().closest_boat_angle(4))
-}
+closest_boat_offsets = [
+    offset.project(db.Vec2.from_polar(1.0, angle))
+    for angle in offset.angle().closest_boat_angle(4)
+]
 
 print(f"""
 Offset: {offset}
 Angle: {offset.angle()}
 Closest boat angles and offsets:""")
-for line in db.report.pretty_seqs([
-    (index, ": offset:", angle[1], " error:", angle[1] - offset, " angle:", angle[0])
-    for index, angle in closest_boat_angles.items()
-]):
+for line in db.report.pretty_seqs([(
+    index,
+    " error:",
+    f"{round((boat_offset - offset).length(), 2)} blocks",
+    " angle:", boat_offset.angle().closest_boat_angle()
+) for index, boat_offset in enumerate(closest_boat_offsets)]):
     print("   ", line)
 
-chosen_angle = closest_boat_angles[db.loop_input(
+chosen_offset = closest_boat_offsets[db.loop_input(
     "\nEnter index of desired boat angle (default, 0): ",
-    {index for index in closest_boat_angles.keys()},
+    {index for index in range(len(closest_boat_offsets))},
     default=0,
 )]
 
-schem_name = db.name_schematic(origin, origin + chosen_angle[1])
-schem = db.generate_schematic(chosen_angle[1], gap_size)
+schem_name = db.name_schematic(origin, (origin + chosen_offset).round())
+schem = db.generate_schematic(chosen_offset, gap_size)
 schem.save(schem_name + ".litematica")
 print("Saved schematic", schem_name)
-
+chosen_angle = chosen_offset.angle().closest_boat_angle()
 print(f"""
-Boat placement angle range: {chosen_angle[0].boat_placement_range()}
-    F3 angle while in boat: {round(chosen_angle[0], 1):.1f}""")
+Boat placement angle range: {chosen_angle.boat_placement_range()}
+    F3 angle while in boat: {round(chosen_angle, 1):.1f}""")
 

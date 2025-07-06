@@ -1,90 +1,82 @@
 import mc_diag_boat as db
 
 
-def get_boat_angles(offset: db.Vec2[int]) -> dict[int, tuple[db.Angle, db.Vec2[int]]]:
-    return {
-        index: (
-            angle,
-            offset.project(db.Vec2.from_polar(1.0, angle)).round(),
-        )
-        for index, angle in enumerate(offset.angle().closest_boat_angle(4))
-    }
+def get_boat_offsets(offset: db.Vec2[int]) -> list[db.Vec2[float]]:
+    return [
+        offset.project(db.Vec2.from_polar(1.0, angle))
+        for angle in offset.angle().closest_boat_angle(4)
+    ]
 
 
-def choose_pattern(
+def get_patterns(offsets: list[db.Vec2[float]]) -> list[db.Pattern]:
+    return [
+        pattern
+        for offset in offsets
+        for pattern in db.pattern.PatternGenerator(offset).patterns
+    ]
+
+
+def get_pareto_patterns(
     offset: db.Vec2[int],
-    angle: tuple[db.Angle, db.Vec2[int]],
-) -> db.Pattern | None:
-    patterns = {
-        index: pattern
-        for index, pattern in enumerate(db.pattern.PatternGenerator(angle[1]).pareto_front)
-    }
+    patterns: list[db.Pattern],
+) -> list[db.Pattern]:
+    patterns_attrs = [
+        (-(offset - pattern.target).length(), -pattern.deviation(), -len(pattern))
+        for pattern in patterns
+    ]
+    pareto_patterns = [
+        patterns[index]
+        for index in db.optimization.pareto_indices(patterns_attrs)
+    ]
+    return [
+        pattern
+        for index, pattern in enumerate(pareto_patterns)
+        if not any(pattern == other for other in pareto_patterns[:index])
+    ]
+
+
+def choose_pattern(offset: db.Vec2[int], patterns: list[db.Pattern]) -> db.Pattern:
+    sorted_patterns = sorted(patterns, key=lambda p: p.deviation())
     print(f"""
 Offset: {offset}
-Angle: {offset.angle()}
-Boat angle error: {offset - angle[1]}
-Patterns for boat angle:""")
-    #for index, pattern in patterns.items():
-    #    print(f"    {index} : [n_blocks: {len(pattern)} , error: {pattern.deviation()} blocks]")
-    for line in db.report.pretty_seqs([
-        (index, ": n_blocks:", len(pattern) - 1, " error:", f"{pattern.deviation()} blocks")
-        for index, pattern in patterns.items()
-    ]):
+Patterns:""")
+    for line in db.report.pretty_seqs([(
+        index,
+        ": offset_error:",
+        f"{round((offset - pattern.target).length(), 2)} blocks",
+        " n_blocks:",
+        len(pattern) - 1,
+        " travel_error:",
+        f"{round(pattern.deviation(), 2)} blocks",
+    ) for index, pattern in enumerate(sorted_patterns)]):
         print("   ", line)
     choice = db.loop_input(
-        "\nEnter index of desired pattern (default, choose other boat angle): ",
-        {index for index in patterns.keys()},
-        default=-1,
-    )
-    if choice == -1:
-        return None
-    return patterns[choice]
-
-
-def choose_angle(
-    offset: db.Vec2[int],
-    boat_angles: dict[int, tuple[db.Angle, db.Vec2[int]]]
-) -> int:
-    print(f"""
-Offset: {offset}
-Angle: {offset.angle()}
-Closest boat angles and offsets:""")
-    for index, angle in boat_angles.items():
-        print(f"    {index} : [offset: {angle[1]} , error: {angle[1] - offset} , angle: {angle[0]}]")
-    return db.loop_input(
-        "\nEnter index of desired boat angle (default, 0): ",
-        {index for index in boat_angles.keys()},
+        "\nEnter index of desired pattern (default, 0): ",
+        {index for index in range(len(sorted_patterns))},
         default=0,
     )
+    return sorted_patterns[choice]
 
 
-def choose(
-    offset: db.Vec2[int],
-    boat_angles: dict[int, tuple[db.Angle, db.Vec2[int]]],
-) -> tuple[db.Angle, db.Pattern]:
-    angle_index = 0
-    while True:
-        choice = choose_pattern(offset, boat_angles[angle_index])
-        if isinstance(choice, db.Pattern):
-            return boat_angles[angle_index][0], choice
-        angle_index = choose_angle(offset, boat_angles)
-
-
-def display_pattern(angle: db.Angle, pattern: db.Pattern) -> None:
+def display_pattern(pattern: db.Pattern) -> None:
+    boat_angle = pattern.target.angle().closest_boat_angle()
     print(f"""
-Boat placement angle range: {angle.boat_placement_range()}
-    F3 angle while in boat: {round(angle, 1):.1f}""")
-    db.report.plot_pattern(pattern)
+Boat placement angle range: {boat_angle.boat_placement_range()}
+    F3 angle while in boat: {round(boat_angle, 1):.1f}""")
+    fig = db.report.plot_pattern(pattern)
     db.report.show_plots()
+    #fig.savefig("test.png")
 
 
 def main():
     origin = db.vec2_input("Enter origin", int)
     destination = db.vec2_input("Enter destination", int)
     offset = destination - origin
-    boat_angles = get_boat_angles(offset)
-    angle, pattern = choose(offset, boat_angles)
-    display_pattern(angle, pattern)
+    boat_offsets = get_boat_offsets(offset)
+    patterns = get_patterns(boat_offsets)
+    pareto_patterns = get_pareto_patterns(offset, patterns)
+    pattern = choose_pattern(offset, pareto_patterns)
+    display_pattern(pattern)
 
 
 if __name__ == "__main__":
