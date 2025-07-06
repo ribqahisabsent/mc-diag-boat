@@ -1,7 +1,8 @@
-from typing import Iterable, Self
+from typing import Iterable
 from dataclasses import dataclass
 from functools import cached_property
 from .vec2 import Vec2
+from .optimization import pareto_indices
 
 
 class Pattern(list[Vec2[int]]):
@@ -13,16 +14,6 @@ class Pattern(list[Vec2[int]]):
         if len(self) <= 1:
             raise IndexError("Pattern with length <2 has no points to determine deviation")
         return (self.target - self.target.project(self[-1])).length()
-
-    def dominates(self, other: Self) -> bool:
-        if self is other:
-            return False
-        s_dev = self.deviation()
-        o_dev = other.deviation()
-        if len(self) <= len(other) and s_dev <= o_dev:
-            return len(self) < len(other) or s_dev < o_dev
-        return False
-
 
 @dataclass(frozen=True)
 class PatternGenerator:
@@ -39,11 +30,11 @@ class PatternGenerator:
 
     @cached_property
     def pareto_front(self) -> list[Pattern]:
-        return [
-            pattern
+        paretos = pareto_indices([
+            (-pattern.deviation(), -len(pattern))
             for pattern in self.patterns
-            if not any([o_pattern.dominates(pattern) for o_pattern in self.patterns])
-        ]
+        ])
+        return [self.patterns[index] for index in paretos]
 
     def len_sorted(self, short2long: bool = True) -> list[Pattern]:
         if short2long:

@@ -43,6 +43,7 @@ def pretty_seqs(
             rows.append(separator.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row)))
     return rows
 
+
 # Display a 2D map representing the blocks in a given pattern
 def plot_pattern(pattern: Pattern) -> Figure:
     pattern_space = np.zeros((abs(pattern[-1].x) + 1, abs(pattern[-1].z) + 1))
