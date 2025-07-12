@@ -24,13 +24,19 @@ def get_boat_offsets(offset: Vec2[int]) -> list[Vec2[float]]:
     ]
 
 
-def choose_path_offset(offset: Vec2[int], boat_offsets: list[Vec2[float]]) -> Vec2[float]:
+def choose_path_offset(
+    origin: Vec2[int],
+    offset: Vec2[int],
+    boat_offsets: list[Vec2[float]],
+) -> Vec2[float]:
     print(f"""
-Offset: {offset}
+Offset: {offset}, Distance: {round(offset.length(), 2)}
 Closest boat offsets:""")
     lines = rep.pretty_seqs([(
         index,
-        ": error:",
+        ": destination:",
+        (origin + boat_offset).round(),
+        " error:",
         f"{round((boat_offset - offset).length(), 2)} blocks",
     ) for index, boat_offset in enumerate(boat_offsets)])
     for line in lines:
@@ -70,7 +76,7 @@ def create_schematic(
     blocks: list[BlockState],
     gap_size: int,
 ) -> None:
-    schem_name = sch.name_schematic(origin, (origin + path_offset.round()).round())
+    schem_name = f"dbpath_{origin.dense_str()}_{(origin + path_offset.round()).dense_str()}"
     schem = sch.generate_schematic(path_offset, gap_size, blocks,schem_name)
     schem.save(schem_name + ".litematica")
     print("\nSaved schematic", schem_name)
@@ -85,7 +91,7 @@ def main():
     destination = inp.vec2_input("Enter destination", int)
     offset = destination - origin
     boat_offsets = get_boat_offsets(offset)
-    path_offset = choose_path_offset(offset, boat_offsets)
+    path_offset = choose_path_offset(origin, offset, boat_offsets)
     gap_size = inp.loop_input(
         "\nEnter gap size (default, 0): ",
         {n for n in range(255)},

@@ -28,11 +28,6 @@ def cut_regions(points: Sequence[Vec2[int]]) -> list[Sequence[Vec2[int]]]:
     return regioned
 
 
-# Format a name for a schematic, including the given origin and destination coordinates
-def name_schematic(origin: Vec2[int], destination: Vec2[int]) -> str:
-    return "dbpath_" + str(origin).replace(" ", "") + "_" + str(destination).replace(" ", "")
-
-
 # Create a Region object for a schematic, given a path (list of coordinates)
 def make_region(path: Sequence[Vec2[int]], blocks: Sequence[lm.BlockState]) -> lm.Region:
     if len(blocks) == 0:

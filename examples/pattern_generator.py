@@ -39,14 +39,20 @@ def get_pareto_patterns(
     ]
 
 
-def choose_pattern(offset: Vec2[int], patterns: list[Pattern]) -> Pattern:
+def choose_pattern(
+    origin: Vec2[int],
+    offset: Vec2[int],
+    patterns: list[Pattern],
+) -> Pattern:
     sorted_patterns = sorted(patterns, key=lambda p: p.deviation())
     print(f"""
-Offset: {offset}
+Offset: {offset}, Distance: {round(offset.length(), 2)}
 Patterns:""")
     lines = rep.pretty_seqs([(
         index,
-        ": offset_error:",
+        ": destination:",
+        (origin + pattern.target).round(),
+        " dest_error:",
         f"{round((offset - pattern.target).length(), 2)} blocks",
         " n_blocks:",
         len(pattern) - 1,
@@ -63,14 +69,16 @@ Patterns:""")
     return sorted_patterns[choice]
 
 
-def display_pattern(pattern: Pattern) -> None:
+def display_pattern(origin: Vec2[int], pattern: Pattern) -> None:
+    pattern_name = f"dbpatt_{origin.dense_str()}_{(origin + pattern.target.round()).dense_str()}"
+    fig = rep.plot_pattern(pattern)
+    fig.savefig(pattern_name)
+    print("\nSaved pattern", pattern_name)
     boat_angle = pattern.target.angle().closest_boat_angle()
     print(f"""
 Boat placement angle range: {boat_angle.boat_placement_range()}
     F3 angle while in boat: {round(boat_angle, 1):.1f}""")
-    fig = rep.plot_pattern(pattern)
     rep.show_plots()
-    #fig.savefig("test.png")
 
 
 def main():
@@ -80,8 +88,8 @@ def main():
     boat_offsets = get_boat_offsets(offset)
     patterns = get_patterns(boat_offsets)
     pareto_patterns = get_pareto_patterns(offset, patterns)
-    pattern = choose_pattern(offset, pareto_patterns)
-    display_pattern(pattern)
+    pattern = choose_pattern(origin, offset, pareto_patterns)
+    display_pattern(origin, pattern)
 
 
 if __name__ == "__main__":

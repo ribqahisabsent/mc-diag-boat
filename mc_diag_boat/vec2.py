@@ -186,6 +186,9 @@ class Vec2(Generic[_T]):
         """
         return self.x, self.z
 
+    def dense_str(self) -> str:
+        return f"({self.x},{self.z})"
+
     def raster(self, origin: "Vec2 | None" = None, block_coords: bool = True) -> list["Vec2[int]"]:
         """Get the raster of the vector.
 
