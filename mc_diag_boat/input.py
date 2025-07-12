@@ -1,4 +1,4 @@
-from typing import Type, TypeVar, overload
+from typing import SupportsIndex, Type, TypeVar, overload
 from .vec2 import Vec2
 
 
@@ -56,7 +56,13 @@ def loop_input(
         return inp
 
 
-def vec2_input(msg: str, t: Type[int | float]) -> Vec2:
+@overload
+def vec2_input(msg: str, t: Type[SupportsIndex]) -> Vec2[int]: ...
+@overload
+def vec2_input(msg: str, t: Type[float]) -> Vec2[float]: ...
+def vec2_input(msg: str, t: Type[SupportsIndex | float]) -> Vec2:
+    if issubclass(t, SupportsIndex):
+        t = int
     print(msg)
     return Vec2(loop_input("    x: ", t), loop_input("    z: ", t))
 
