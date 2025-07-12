@@ -3,7 +3,7 @@ from typing import Literal, Sequence
 
 def pretty_seqs(
     sequences: Sequence[Sequence],
-    align: Literal["L", "R", "C"] | tuple[Literal["L", "R", "C"]] = "L",
+    align: Literal["L", "R", "C"] | tuple[Literal["L", "R", "C"], ...] = "L",
     separator: str = " ",
 ) -> Sequence[str]:
     if len({len(sequence) for sequence in sequences}) > 1:
