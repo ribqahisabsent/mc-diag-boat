@@ -2,13 +2,13 @@ from typing import ClassVar, Self, overload
 
 
 class Angle(float):
-    BOAT_ANGLE_STEP: ClassVar["Angle"]
-    NORTH: ClassVar["Angle"]
-    WEST: ClassVar["Angle"]
-    SOUTH: ClassVar["Angle"]
-    EAST: ClassVar["Angle"]
-    ZERO: ClassVar["Angle"]
-    BOAT_ANGLES: ClassVar[list["Angle"]]
+    BOAT_ANGLE_STEP: ClassVar[Self]
+    NORTH: ClassVar[Self]
+    WEST: ClassVar[Self]
+    SOUTH: ClassVar[Self]
+    EAST: ClassVar[Self]
+    ZERO: ClassVar[Self]
+    BOAT_ANGLES: ClassVar[list[Self]]
 
     def __new__(cls, degrees: float) -> Self:
         return super().__new__(cls, (degrees + 180) % 360 - 180)
@@ -19,14 +19,14 @@ class Angle(float):
     def __neg__(self) -> Self:
         return type(self)(-self)
 
-    def angular_dist(self, other: float) -> "Angle":
-        return Angle((other - self + 180) % 360 - 180)
+    def angular_dist(self, other: float) -> Self:
+        return self.__class__((other - self + 180) % 360 - 180)
 
     @overload
-    def closest_boat_angle(self) -> "Angle": ...
+    def closest_boat_angle(self) -> Self: ...
     @overload
-    def closest_boat_angle(self, n: int) -> list["Angle"]: ...
-    def closest_boat_angle(self, n: int | None = None) -> "Angle | list[Angle]":
+    def closest_boat_angle(self, n: int) -> list[Self]: ...
+    def closest_boat_angle(self, n: int | None = None) -> Self | list[Self]:
         sorted_boat_angles = sorted(
             self.BOAT_ANGLES,
             key=lambda x: abs(self.angular_dist(x))
@@ -39,14 +39,14 @@ class Angle(float):
             return sorted_boat_angles[:n]
         raise ValueError("n must be -1 or in [1, 256]")
 
-    def boat_placement_range(self) -> tuple["Angle", "Angle"] | None:
+    def boat_placement_range(self) -> tuple[Self, Self] | None:
         boat_angle = self.closest_boat_angle()
         if boat_angle == 180.0 or boat_angle == -180.0:
             return None
         if boat_angle < 0.0:
-            return Angle(boat_angle - self.BOAT_ANGLE_STEP), self
+            return self.__class__(boat_angle - self.BOAT_ANGLE_STEP), self
         if boat_angle > 0.0:
-            return self, Angle(boat_angle + self.BOAT_ANGLE_STEP)
+            return self, self.__class__(boat_angle + self.BOAT_ANGLE_STEP)
         return -self.BOAT_ANGLE_STEP, self.BOAT_ANGLE_STEP
 
 
