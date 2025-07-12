@@ -1,11 +1,4 @@
 from typing import Literal, Sequence
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from .pattern import Pattern
-
-
-MIN_COLOR = 0.12
 
 
 def pretty_seqs(
@@ -42,35 +35,6 @@ def pretty_seqs(
         if align[index] == "C":
             rows.append(separator.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row)))
     return rows
-
-
-# Display a 2D map representing the blocks in a given pattern
-def plot_pattern(pattern: Pattern) -> Figure:
-    pattern_space = np.zeros((abs(pattern[-1].x) + 1, abs(pattern[-1].z) + 1))
-    for index, point in enumerate(pattern[:-1]):
-        pattern_space[(abs(point.x), abs(point.z))] = (len(pattern) - index) / len(pattern) + MIN_COLOR
-    pattern_space[(abs(pattern[-1].x), abs(pattern[-1].z))] = 1.0 + MIN_COLOR
-    pattern_space = np.transpose(pattern_space)
-    fig, ax = plt.subplots()
-    ax.imshow(pattern_space, cmap="turbo", interpolation="nearest")
-    if pattern[-1].x < 0:
-        fig.gca().invert_xaxis()
-    if pattern[-1].z < 0:
-        fig.gca().invert_yaxis()
-    ax.set_title("Start at red (0, 0), follow rainbow\n(lone red is start of next iteration)")
-    ax.set_xlabel("West < - > East")
-    ax.set_ylabel("South < - > North")
-    ax.set_xticks(
-        [i for i in range(abs(pattern[-1].x) + 1)],
-        [str(i) for i in range(abs(pattern[-1].x) + 1)],
-        rotation=90
-    )
-    ax.set_yticks([i for i in range(abs(pattern[-1].z) + 1)])
-    return fig
-
-
-def show_plots() -> None:
-    plt.show()
 
 
 SIG_FIGS = 4

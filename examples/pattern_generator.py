@@ -71,14 +71,14 @@ Patterns:""")
 
 def display_pattern(origin: Vec2[int], pattern: Pattern) -> None:
     pattern_name = f"dbpatt_{origin.dense_str()}_{(origin + pattern.target.round()).dense_str()}"
-    fig = rep.plot_pattern(pattern)
+    fig, plt = pattern.plot()
     fig.savefig(pattern_name)
     print("\nSaved pattern", pattern_name)
     boat_angle = pattern.target.angle().closest_boat_angle()
     print(f"""
 Boat placement angle range: {boat_angle.boat_placement_range()}
     F3 angle while in boat: {round(boat_angle, 1):.1f}""")
-    rep.show_plots()
+    plt.show()
 
 
 def main():
