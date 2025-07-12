@@ -44,7 +44,7 @@ def choose_pattern(offset: Vec2[int], patterns: list[Pattern]) -> Pattern:
     print(f"""
 Offset: {offset}
 Patterns:""")
-    for line in rep.pretty_seqs([(
+    lines = rep.pretty_seqs([(
         index,
         ": offset_error:",
         f"{round((offset - pattern.target).length(), 2)} blocks",
@@ -52,7 +52,8 @@ Patterns:""")
         len(pattern) - 1,
         " travel_error:",
         f"{round(pattern.deviation(), 2)} blocks",
-    ) for index, pattern in enumerate(sorted_patterns)]):
+    ) for index, pattern in enumerate(sorted_patterns)])
+    for line in lines:
         print("   ", line)
     choice = inp.loop_input(
         "\nEnter index of desired pattern (default, 0): ",
