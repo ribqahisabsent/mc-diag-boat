@@ -7,7 +7,7 @@ SXN_SIZE = 16
 
 
 # Add gaps to a raster and segment it into small sections for inclusion in a schematic
-def add_gaps(raster: Sequence[Vec2[int]], gap_size: int) -> list[Vec2[int]]:
+def _add_gaps(raster: Sequence[Vec2[int]], gap_size: int) -> list[Vec2[int]]:
     return [
         coord
         for index, coord in enumerate(raster)
@@ -15,7 +15,7 @@ def add_gaps(raster: Sequence[Vec2[int]], gap_size: int) -> list[Vec2[int]]:
     ]
 
 
-def cut_regions(points: Sequence[Vec2[int]]) -> list[Sequence[Vec2[int]]]:
+def _cut_regions(points: Sequence[Vec2[int]]) -> list[Sequence[Vec2[int]]]:
     regioned: list[Sequence[Vec2]] = []
     region_start_index = 0
     for index in range(len(points)):
@@ -29,7 +29,7 @@ def cut_regions(points: Sequence[Vec2[int]]) -> list[Sequence[Vec2[int]]]:
 
 
 # Create a Region object for a schematic, given a path (list of coordinates)
-def make_region(path: Sequence[Vec2[int]], blocks: Sequence[lm.BlockState]) -> lm.Region:
+def _make_region(path: Sequence[Vec2[int]], blocks: Sequence[lm.BlockState]) -> lm.Region:
     if len(blocks) == 0:
         raise ValueError("Must be at least one BlockState provided.")
     path_span = Vec2(
@@ -59,15 +59,15 @@ def generate_schematic(
     name: str | None = None
 ) -> lm.Schematic:
     raster = offset.raster()
-    gapped_raster = add_gaps(raster, gap_size)
-    regioned_raster = cut_regions(gapped_raster)
+    gapped_raster = _add_gaps(raster, gap_size)
+    regioned_raster = _cut_regions(gapped_raster)
     if name is None:
         name = lm.info.DEFAULT_NAME
     schem = lm.Schematic(name=name, author="mc_diag_boat")
     if isinstance(blocks, lm.BlockState):
         blocks = [blocks]
     for index, region in enumerate(regioned_raster):
-        schem.regions[str(index)] = make_region(region, blocks)
+        schem.regions[str(index)] = _make_region(region, blocks)
     return schem
     #filename = smart_filename(schem_name + ".litematic")
     #schem.save(filename)

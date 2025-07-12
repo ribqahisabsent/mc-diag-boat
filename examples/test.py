@@ -3,7 +3,7 @@ import skimage.draw
 from mc_diag_boat.vec2 import Vec2
 from mc_diag_boat.angle import Angle
 from mc_diag_boat.pattern import PatternGenerator
-from mc_diag_boat.schematic import add_gaps, cut_regions, generate_schematic
+from mc_diag_boat.schematic import _add_gaps, _cut_regions, generate_schematic
 from mc_diag_boat.reporting import pretty_sequences
 from mc_diag_boat.input import loop_input
 from mc_diag_boat.reporting import plot_pattern
@@ -28,9 +28,9 @@ if False:
     print(type(raster[0]))
 
 if False:
-    gapped_raster = add_gaps(raster, 1)
-    cut_raster = cut_regions(raster)
-    cut_gapped_raster = cut_regions(gapped_raster)
+    gapped_raster = _add_gaps(raster, 1)
+    cut_raster = _cut_regions(raster)
+    cut_gapped_raster = _cut_regions(gapped_raster)
     print(gapped_raster)
     print(cut_raster)
     print(cut_gapped_raster)
