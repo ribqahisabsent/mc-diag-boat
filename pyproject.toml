@@ -1,6 +1,6 @@
 [project]
 name = "mc_diag_boat"
-version = "0.1.10"
+version = "0.1.11"
 description = "A set of functions for building diagonal boat roads in Minecraft"
 authors = [
     {name = "Ribqah"}
