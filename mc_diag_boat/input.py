@@ -78,6 +78,18 @@ def vec2_input(msg: str, t: Type[SupportsIndex]) -> Vec2[int]: ...
 @overload
 def vec2_input(msg: str, t: Type[float]) -> Vec2[float]: ...
 def vec2_input(msg: str, t: Type[SupportsIndex | float]) -> Vec2:
+    """Request x and z values for a `Vec2` object until valid inputs are given.
+
+    Parameters
+    ----------
+    `msg` : `str`
+        The message to display to the user before x and z values are requested.
+        This message will only be displayed once, unlike the requests for values,
+        which are reprinted after invalid inputs.
+    `t` `Type[SupportsIndex]` or `Type[float]`
+        The desired type of the resulting `Vec2`. `SupportsIndex` will return a
+        `Vec2[int]`, `float` a `Vec2[float]`.
+    """
     if issubclass(t, SupportsIndex):
         t = int
     print(msg)

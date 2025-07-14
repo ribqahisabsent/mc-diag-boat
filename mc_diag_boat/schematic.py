@@ -67,7 +67,6 @@ def _make_region(path: Sequence[Vec2[int]], blocks: Sequence[lm.BlockState]) -> 
     return region
 
 
-# TODO make logic for naming part  of another function, accept a name here
 # Create and save a Litematica schematic file (.litematic); name uses the current BOAT destination
 def generate_schematic(
     offset: Vec2,

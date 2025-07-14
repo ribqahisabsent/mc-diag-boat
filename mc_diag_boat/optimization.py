@@ -20,6 +20,24 @@ import numpy as np
 
 
 def pareto_indices(points: Sequence[Sequence] | np.ndarray) -> np.ndarray:
+    """The index of each sequence on the pareto front of all passed sequences.
+
+    This function aims for maximization, so measures which are intended to be
+    minimized should be negated prior to being passed.
+
+    Parameters
+    ----------
+    `points` : `Sequence[Sequence]` or `numpy.ndarray`
+        A sequence of sequences or 2D numpy array with values that support
+        comparison. Each inner sequence should contain the relevant measures for
+        an object which can be used to determine whether it lies on the pareto
+        front of all objects in the top-level sequence.
+
+    Returns
+    -------
+    `indices` : `numpy.ndarray`
+        An array of the index of each sequence that lies on the pareto front.
+    """
     points = np.array(points)
     return np.where(np.apply_along_axis(
             lambda p: ~np.any(np.all(points >= p, axis=1) & np.any(points > p, axis=1)),

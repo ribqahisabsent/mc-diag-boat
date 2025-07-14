@@ -34,12 +34,31 @@ class Pattern(list[Vec2[int]]):
         self.target = target
 
     def deviation(self) -> float:
+        """The distance between the extension of this pattern's direction and
+        the target destination.
+
+        Returns
+        -------
+        `deviation` : `float`
+            The deviation distance in blocks.
+        """
         if len(self) <= 1:
             raise IndexError("Pattern with length <2 has no points to determine deviation")
         return (self.target - self.target.project(self[-1])).length()
 
-    # Display a 2D map representing the blocks in a given pattern
     def plot(self) -> tuple[Figure, ModuleType]:
+        """A plot representing the block positions in this pattern.
+
+        Returns
+        -------
+        `fig` : `matplotlib.figure.Figure`
+            A figure showing the block placement locations in this pattern.
+            Save the figure by calling its `savefig()` method. Display the figure
+            by calling the `show()` function of the returned `plt` module.
+        `plt` : `ModuleType` (`matplotlib.pyplot`)
+            The `matplotlib.pyplot` module. This is returned as a convenience,
+            enabling the calling script to show the figure with `plt.show()`.
+        """
         pattern_space = np.zeros((abs(self[-1].x) + 1, abs(self[-1].z) + 1))
         for index, point in enumerate(self[:-1]):
             pattern_space[(abs(point.x), abs(point.z))] = (len(self) - index) / len(self) + self.MIN_PLOT_COLOR
@@ -69,6 +88,8 @@ class PatternGenerator:
 
     @cached_property
     def patterns(self) -> list[Pattern]:
+        """`list[Pattern]` : All patterns generated for the given target.
+        """
         raster = self.target.raster()
         return [
             Pattern(raster[:length], self.target)
@@ -77,6 +98,9 @@ class PatternGenerator:
 
     @cached_property
     def pareto_front(self) -> list[Pattern]:
+        """`list[Pattern]` : All patterns on the pareto front of all patterns
+        generated for the given target.
+        """
         paretos = pareto_indices([
             (-pattern.deviation(), -len(pattern))
             for pattern in self.patterns
@@ -84,11 +108,25 @@ class PatternGenerator:
         return [self.patterns[index] for index in paretos]
 
     def len_sorted(self, short2long: bool = True) -> list[Pattern]:
+        """All generated patterns sorted by sequence length.
+
+        Parameters
+        ----------
+        `short2long` : `bool`, default `True`
+            Whether to sort from shortest to longest.
+        """
         if short2long:
             return sorted(self.patterns, key=lambda p: len(p))
         return sorted(self.patterns, key=lambda p: -len(p))
 
     def deviation_sorted(self, close2far: bool = True) -> list[Pattern]:
+        """All generated patterns sorted by deviation from the target.
+
+        Parameters
+        ----------
+        `close2far` : `bool`, default `True`
+            Whether to sort from lowest deviation to highest
+        """
         if close2far:
             return sorted(self.patterns, key=lambda p: p.deviation())
         return sorted(self.patterns, key=lambda p: -p.deviation())

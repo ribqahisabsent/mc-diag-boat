@@ -99,7 +99,7 @@ class Vec2(Generic[_T]):
         return f"({self.x}, {self.z})"
 
     def length(self) -> float:
-        """Get the length of this vector
+        """The length of this vector
 
         Returns
         -------
@@ -109,7 +109,7 @@ class Vec2(Generic[_T]):
         return dist((0, 0), (self.x, self.z))
 
     def angle(self) -> Angle:
-        """Get the angle of this vector.
+        """The angle of this vector.
 
         Returns
         -------
@@ -141,7 +141,7 @@ class Vec2(Generic[_T]):
         )
 
     def normalize(self) -> "Vec2[float]":
-        """Get this vector's normal vector.
+        """This vector's normal vector.
 
         Returns
         -------
@@ -194,7 +194,7 @@ class Vec2(Generic[_T]):
         return Vec2(round(self.x, ndigits), round(self.z, ndigits))
 
     def as_tuple(self) -> tuple[_T, _T]:
-        """Get a tuple of the `x` and `z` values of this vector.
+        """The tuple of the `x` and `z` values of this vector.
 
         Returns
         -------
@@ -207,7 +207,7 @@ class Vec2(Generic[_T]):
         return f"({self.x},{self.z})"
 
     def raster(self, origin: "Vec2 | None" = None, block_coords: bool = True) -> list["Vec2[int]"]:
-        """Get the raster of the vector.
+        """The raster of this vector.
 
         The raster is a continuous, direct path of block locations
         from the origin (default (0, 0)) to the vector tail.

@@ -37,6 +37,19 @@ class Angle(float):
         return type(self)(-self)
 
     def angular_dist(self, other: float) -> Self:
+        """The angle from this angle to another, [-180, 180).
+
+        Parameters
+        ----------
+        `other` : `float`
+            The comparison angle.
+
+        Returns
+        -------
+        `angle` : `Angle`
+            The angle from this angle to `other`. Values are bounded [-180, 180)
+            and represent what angle would add with this angle to reach `other`.
+        """
         return self.__class__((other - self + 180) % 360 - 180)
 
     @overload
@@ -44,6 +57,21 @@ class Angle(float):
     @overload
     def closest_boat_angle(self, n: int) -> list[Self]: ...
     def closest_boat_angle(self, n: int | None = None) -> Self | list[Self]:
+        """The closest angle(s) to this angle that a boat could face.
+
+        Parameters
+        ----------
+        `n` : `int`, optional
+            The number of angles to return. If not given, 1 angle is returned.
+            If `-1`, all 256 boat angles are returned, in ascending order of
+            angular distance from this angle.
+
+        Returns
+        -------
+        `angle(s)` : `Angle` or `list[Angle]`
+            The valid boat angle(s) which is/are closest to this angle. If `n`
+            is not given or `1`, the return type is `Angle`.
+        """
         sorted_boat_angles = sorted(
             self.BOAT_ANGLES,
             key=lambda x: abs(self.angular_dist(x))
@@ -57,6 +85,16 @@ class Angle(float):
         raise ValueError("n must be -1 or in [1, 256]")
 
     def boat_placement_range(self) -> tuple[Self, Self] | None:
+        """The angular range within which a boat can be placed to reach
+        the closest boat angle to this angle.
+
+        Returns
+        -------
+        `angular_range` : `tuple[Angle, Angle]`
+            The angles between which a player could face while placing a boat
+            and have it face towards the closest boat angle to this angle,
+            sorted in ascending order.
+        """
         boat_angle = self.closest_boat_angle()
         if boat_angle == 180.0 or boat_angle == -180.0:
             return None
