@@ -85,7 +85,4 @@ def generate_schematic(
     for index, region in enumerate(regioned_raster):
         schem.regions[str(index)] = _make_region(region, blocks)
     return schem
-    #filename = smart_filename(schem_name + ".litematic")
-    #schem.save(filename)
-    #print("Saved schematic", filename)
 
