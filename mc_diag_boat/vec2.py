@@ -27,6 +27,12 @@ _T = TypeVar("_T", int, float)
 
 @dataclass(frozen=True, slots=True)
 class Vec2(Generic[_T]):
+    """A 2D vector class which supports restriction to integer values
+    for type hinting purposes.
+
+    As these vectors are assumed to lie in the horizontal plane, their
+    scalars are accessed via the attributes `x` and `z`.
+    """
     x: _T
     z: _T
 

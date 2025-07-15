@@ -27,6 +27,9 @@ from .optimization import pareto_indices
 
 
 class Pattern(list[Vec2[int]]):
+    """A child class of `list`, restricted to `Vec2[int]` elements and adding
+    methods for plotting and error assessment.
+    """
     MIN_PLOT_COLOR = 0.12
 
     def __init__(self, iterable: Iterable, target: Vec2) -> None:
@@ -83,6 +86,9 @@ class Pattern(list[Vec2[int]]):
 
 @dataclass(frozen=True)
 class PatternGenerator:
+    """A class which generates all patterns (up to `max_pattern_len`) for a
+    given target offset.
+    """
     target: Vec2
     max_pattern_len: int = 64
 
