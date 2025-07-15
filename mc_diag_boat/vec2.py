@@ -156,6 +156,18 @@ class Vec2(Generic[_T]):
     @overload
     def dot(self, other: "Vec2[float]") -> float: ...
     def dot(self, other: "Vec2") -> _T | float:
+        """The dot product of this vector and another.
+
+        Parameters
+        ----------
+        `other` : `Vec2`
+            The vector to dot with this vector.
+
+        Returns
+        -------
+        `dot` : `int` or `float`
+            The dot product.
+        """
         return self.x * other.x + self.z * other.z
 
     @overload
@@ -163,9 +175,33 @@ class Vec2(Generic[_T]):
     @overload
     def cross(self, other: "Vec2[float]") -> float: ...
     def cross(self, other: "Vec2") -> _T | float:
+        """The cross product of this vector and another.
+
+        Parameters
+        ----------
+        `other` : `Vec2`
+            The vector to cross with this vector.
+
+        Returns
+        -------
+        `cross` : `int` or `float`
+            The cross product.
+        """
         return self.x * other.z - self.z * other.x
 
     def project(self, other: "Vec2") -> "Vec2[float]":
+        """The projection of this vector onto another vector.
+
+        Parameters
+        ----------
+        `other` : `Vec2`
+            The vector to project this vector to.
+
+        Returns
+        -------
+        `projection` : `Vec2[float]`
+            The projection of this vector onto `other`.
+        """
         if other == Vec2.ZERO:
             raise ValueError("`other` must be a nonzero Vec2")
         return self.dot(other) / other.dot(other) * other
@@ -175,7 +211,7 @@ class Vec2(Generic[_T]):
     @overload
     def round(self, ndigits: SupportsIndex) -> "Vec2[float]": ...
     def round(self, ndigits: SupportsIndex | None = None) -> "Vec2":
-        """Return a rounded version of this vector.
+        """A rounded version of this vector.
 
         Parameters
         ----------
@@ -204,6 +240,13 @@ class Vec2(Generic[_T]):
         return self.x, self.z
 
     def dense_str(self) -> str:
+        """A string representation of this vector with no spaces.
+
+        Returns
+        -------
+        `dense_str` : `str`
+            E.g., "(8,-5)".
+        """
         return f"({self.x},{self.z})"
 
     def raster(self, origin: "Vec2 | None" = None, block_coords: bool = True) -> list["Vec2[int]"]:
