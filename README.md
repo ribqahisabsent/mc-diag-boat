@@ -1,4 +1,4 @@
-# Diagonal Boat Helper
+# MC Diag Boat
 
 A set of functions for building diagonal boat roads in Minecraft
 
