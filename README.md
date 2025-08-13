@@ -4,7 +4,7 @@ A set of functions for building diagonal boat roads in Minecraft
 
 ## Run in Google Colab:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ribqahisabsent/mc-diag-boat/blob/main/colab_app.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ribqahisabsent/mc-diag-boat/blob/main/examples/mc_diag_boat.ipynb)
 
 ## Watch the Video
 
