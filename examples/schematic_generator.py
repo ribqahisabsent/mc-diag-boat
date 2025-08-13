@@ -78,7 +78,8 @@ def create_schematic(
 ) -> None:
     schem_name = f"dbpath_{origin.dense_str()}_{(origin + path_offset.round()).dense_str()}"
     schem = sch.generate_schematic(path_offset, gap_size, blocks,schem_name)
-    schem.save(schem_name + ".litematica")
+    filepath = rep.unique_filename(schem_name + ".litematica")
+    schem.save(str(filepath))
     print("\nSaved schematic", schem_name)
     path_angle = path_offset.angle().closest_boat_angle()
     print(f"""
@@ -89,6 +90,8 @@ Boat placement angle range: {path_angle.boat_placement_range()}
 def main():
     origin = inp.vec2_input("Enter origin", int)
     destination = inp.vec2_input("Enter destination", int)
+    if origin == destination:
+        raise ValueError("Destination must be different from origin")
     offset = destination - origin
     boat_offsets = get_boat_offsets(offset)
     path_offset = choose_path_offset(origin, offset, boat_offsets)

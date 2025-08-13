@@ -16,6 +16,7 @@
 
 
 from typing import Literal, Sequence
+from pathlib import Path
 
 
 def pretty_seqs(
@@ -77,4 +78,17 @@ def pretty_seqs(
         if align[index] == "C":
             rows.append(separator.join(f"{str(item):^{item_lengths[col]}}" for col, item in enumerate(row)))
     return rows
+
+
+def unique_filename(filepath: str | Path) -> Path:
+    filepath = Path(filepath)
+    if filepath.suffix == "":
+        raise ValueError("filepath must have a suffix")
+    if not filepath.exists():
+        return filepath
+    for n in range(1, 100):
+        numbered_filepath = filepath.with_stem(f"{filepath.stem}_{n:02d}")
+        if not numbered_filepath.exists():
+            return numbered_filepath
+    raise RuntimeError(f"Exceeded max number of attempts to generate unique filepath for {filepath}")
 

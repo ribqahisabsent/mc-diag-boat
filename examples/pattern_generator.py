@@ -72,7 +72,8 @@ Patterns:""")
 def display_pattern(origin: Vec2[int], pattern: Pattern) -> None:
     pattern_name = f"dbpatt_{origin.dense_str()}_{(origin + pattern.target.round()).dense_str()}"
     fig, plt = pattern.plot()
-    fig.savefig(pattern_name)
+    filepath = rep.unique_filename(pattern_name + ".png")
+    fig.savefig(filepath)
     print("\nSaved pattern", pattern_name)
     boat_angle = pattern.target.angle().closest_boat_angle()
     print(f"""
@@ -84,6 +85,8 @@ Boat placement angle range: {boat_angle.boat_placement_range()}
 def main():
     origin = inp.vec2_input("Enter origin", int)
     destination = inp.vec2_input("Enter destination", int)
+    if origin == destination:
+        raise ValueError("Destination must be different from origin")
     offset = destination - origin
     boat_offsets = get_boat_offsets(offset)
     patterns = get_patterns(boat_offsets)
