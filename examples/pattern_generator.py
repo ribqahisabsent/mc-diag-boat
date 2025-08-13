@@ -2,7 +2,7 @@ from mc_diag_boat.vec2 import Vec2
 from mc_diag_boat.pattern import Pattern, PatternGenerator
 import mc_diag_boat.optimization as opt
 import mc_diag_boat.input as inp
-import mc_diag_boat.report as rep
+import mc_diag_boat.formatting as fmt
 
 
 def get_boat_offsets(offset: Vec2[int]) -> list[Vec2[float]]:
@@ -48,7 +48,7 @@ def choose_pattern(
     print(f"""
 Offset: {offset}, Distance: {round(offset.length(), 2)}
 Patterns:""")
-    lines = rep.pretty_seqs([(
+    lines = fmt.pretty_seqs([(
         index,
         ": destination:",
         (origin + pattern.target).round(),
@@ -72,7 +72,7 @@ Patterns:""")
 def display_pattern(origin: Vec2[int], pattern: Pattern) -> None:
     pattern_name = f"dbpatt_{origin.dense_str()}_{(origin + pattern.target.round()).dense_str()}"
     fig, plt = pattern.plot()
-    filepath = rep.unique_filename(pattern_name + ".png")
+    filepath = fmt.unique_filename(pattern_name + ".png")
     fig.savefig(filepath)
     print("\nSaved pattern", pattern_name)
     boat_angle = pattern.target.angle().closest_boat_angle()

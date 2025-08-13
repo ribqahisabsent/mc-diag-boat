@@ -2,7 +2,7 @@ from litemapy import BlockState
 from mc_diag_boat.vec2 import Vec2
 import mc_diag_boat.schematic as sch
 import mc_diag_boat.input as inp
-import mc_diag_boat.report as rep
+import mc_diag_boat.formatting as fmt
 
 
 BLOCKS = [
@@ -32,7 +32,7 @@ def choose_path_offset(
     print(f"""
 Offset: {offset}, Distance: {round(offset.length(), 2)}
 Closest boat offsets:""")
-    lines = rep.pretty_seqs([(
+    lines = fmt.pretty_seqs([(
         index,
         ": destination:",
         (origin + boat_offset).round(),
@@ -78,7 +78,7 @@ def create_schematic(
 ) -> None:
     schem_name = f"dbpath_{origin.dense_str()}_{(origin + path_offset.round()).dense_str()}"
     schem = sch.generate_schematic(path_offset, gap_size, blocks,schem_name)
-    filepath = rep.unique_filename(schem_name + ".litematica")
+    filepath = fmt.unique_filename(schem_name + ".litematica")
     schem.save(str(filepath))
     print("\nSaved schematic", schem_name)
     path_angle = path_offset.angle().closest_boat_angle()
