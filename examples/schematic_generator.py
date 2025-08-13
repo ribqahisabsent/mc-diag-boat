@@ -56,7 +56,7 @@ def choose_blocks() -> list[BlockState]:
         indices = str(inp.loop_input(
             "\nEnter indices of desired blocks in order (default, 15 (blue ice topped with buttons)): ",
             int,
-            default=12,
+            default=15,
         ))
         try:
             if any(int(index) - 1 < 0 for index in indices):
