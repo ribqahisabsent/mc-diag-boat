@@ -4,9 +4,8 @@ from mc_diag_boat.vec2 import Vec2
 from mc_diag_boat.angle import Angle
 from mc_diag_boat.pattern import PatternGenerator
 from mc_diag_boat.schematic import _add_gaps, _cut_regions, generate_schematic
-from mc_diag_boat.reporting import pretty_sequences
+from mc_diag_boat.formatting import pretty_seqs
 from mc_diag_boat.input import loop_input
-from mc_diag_boat.reporting import plot_pattern
 
 
 if False:
@@ -141,7 +140,7 @@ if False:
         p.deviation(),
         p[-1].angle() - trgt.angle(),
     ) for p in pfront]
-    pretty_pfront = pretty_sequences(pf_tuples)
+    pretty_pfront = pretty_seqs(pf_tuples)
     for p in pretty_pfront:
         print(f"  {p}")
     sort = pg.len_sorted(short2long=False)
@@ -156,7 +155,6 @@ if True:
     trgt = Vec2(-205, 160)
     pg = PatternGenerator(trgt)
     pattern = pg.pareto_front[-3]
-    plot_pattern(pattern)
 
 if False:
     options = {0, 1, 2, 3, 4}
